@@ -25,20 +25,22 @@
      Very handy for certain sorts of macros."
     (let ((symbols->mappings (lambda-cond (x)
                                ((symbolp x) `(,x ,x))
-                               ((null (cddr x)) `(,#1=(car x) ,#1#))
+                               ((null (cdr x)) `(,#1=(car x) ,#1#))
                                (t x))))
       (mapcar symbols->mappings list)))
 
+     
     (defun rollup-list (list)
       (labels ((helper (list &optional accum)
                  (tagbody
                    start
                    (cond
-                     ((endp list) (return-from helper accum))
-                     (t (helper (cdr list)
-                                (cond
-                                  ((null accum) (car list))
-                                  (t `(,@(car list) ,accum)))))))))
+                     ((endp list) (return-from rollup-list accum))
+                     (t (setf accum  (cond
+                                       ((null accum) (car list))
+                                       (t `(,@(car list) ,accum)))
+                              list (cdr list))
+                        (go start))))))
         (helper (reverse list)))))
 
 (defmacro destructuring-lambda ((&rest args) &body body)
@@ -67,8 +69,9 @@
    from one object to another."
   (once-only (from to)
     `(progn
-       (setf ,@(iterate (for (fro-slot to-slot) in (ensure-mapping slots))
-                        (collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot)))))
+       (setf ,@(apply #'append
+                      (iterate (for (fro-slot to-slot) in (ensure-mapping slots))
+                               (collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot))))))
        ,to)))
 
 (defun transform-alist (function alist)
