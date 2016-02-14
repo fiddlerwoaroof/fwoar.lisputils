@@ -19,7 +19,7 @@
      (declare (ignorable anaphora:it))
      ,@body))
 
-(eval-when (:compile-toplevel :load-toplevel :execute) 
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defun ensure-mapping (list)
     "Take a list and make sure that it's parseable as a let-style binding.
      Very handy for certain sorts of macros."
@@ -29,19 +29,22 @@
                                (t x))))
       (mapcar symbols->mappings list)))
 
-     
-    (defun rollup-list (list)
-      (labels ((helper (list &optional accum)
+
+    (defun rollup-list (list &optional body)
+      (labels ((helper (list &optional accum start)
                  (tagbody
                    start
                    (cond
                      ((endp list) (return-from rollup-list accum))
-                     (t (setf accum  (cond
-                                       ((null accum) (car list))
-                                       (t `(,@(car list) ,accum)))
-                              list (cdr list))
+                     (t (psetf accum  (cond
+                                        ((null accum) (car list))
+                                        (start `(,@(car list) ,@accum)) 
+                                        (t `(,@(car list) ,accum)))
+                               list (cdr list)
+                               start nil)
+                        ;; NOTE: REMEMBER! This call to #'GO is the "tail call"
                         (go start))))))
-        (helper (reverse list)))))
+        (helper (reverse list) body t))))
 
 (defmacro destructuring-lambda ((&rest args) &body body)
   "A lambda whose arguments can be lambda-lists to be destructured"
@@ -50,14 +53,34 @@
          (args (mapcar #'list args args-syms))
          (destructuring-expressions
            (rollup-list
-             (append
                (loop for (arg arg-sym) in args
                      collect (if (consp arg)
                                `(destructuring-bind ,arg ,arg-sym)
                                `(let ((,arg ,arg-sym)))))
-               body))))
+               body)))
     `(lambda ,args-syms
        ,destructuring-expressions)))
+
+
+;;; CASES:::
+#|
+(fw.lu::destructuring-lambda ((slot slot-keyword . r))
+                        (make-slot-spec slot slot-keyword))
+
+(fw.lu::destructuring-lambda ((slot slot-keyword . r))
+                        (declare (ignore r))
+                        (make-slot-spec slot slot-keyword))
+
+(fw.lu::destructuring-lambda ((slot slot-keyword . r) b c)
+                        (make-slot-spec slot slot-keyword))
+
+(fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
+                        (make-slot-spec slot slot-keyword))
+
+(fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
+                        (declare (ignore r))
+                        (make-slot-spec slot slot-keyword))
+|#
 
 (defun alist-string-hash-table (alist)
   "Make a hash table suitable for strings and other non-eql types
