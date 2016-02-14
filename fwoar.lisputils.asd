@@ -7,5 +7,5 @@
   :serial t
   :components ((:file "package")
                (:file "fwoar.lisputils"))
-  :depends-on (#:alexandria #:iterate #:plump))
+  :depends-on (#:anaphora #:alexandria #:iterate #:plump))
 

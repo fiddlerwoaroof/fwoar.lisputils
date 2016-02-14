@@ -15,8 +15,8 @@
        ,@body)))
 
 (defmacro alambda (&body body)
-  `(lambda (it)
-     (declare (ignorable it))
+  `(lambda (anaphora:it)
+     (declare (ignorable anaphora:it))
      ,@body))
 
 (eval-when (:compile-toplevel :load-toplevel :execute) 
