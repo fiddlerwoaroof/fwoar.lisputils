@@ -7,5 +7,6 @@
            #:ensure-mapping #:alist-string-hash-table #:make-pairs
            #:copy-slots #:transform-alist #:%json-pair-transform
            #:%default-pair-transform #:default-when
-           #:transform-result #:slots-to-pairs #:normalize-html))
+           #:transform-result #:slots-to-pairs #:normalize-html
+           #:destructuring-lambda))
 
