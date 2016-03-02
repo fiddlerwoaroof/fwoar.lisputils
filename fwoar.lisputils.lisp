@@ -2,6 +2,28 @@
 
 (in-package #:fwoar.lisputils)
 
+(defmacro let-each ((&key (be '*)) &body forms)
+  "Bind each element successively to the symbol specified via :be"
+  `(let* ,(loop for form in forms
+           collect (list be form))
+     ,be))
+
+(defmacro let-first ((&key (be '*)) &body forms)
+  "Bind the result of the first form to the symbol specified via :be"
+  `(let* ((,be ,(car forms)))
+     ,@(loop for form in (cdr forms)
+             collect (list be form))
+     ,be))
+
+(defmacro let-second ((&key (be '*)) &body forms)
+  "Bind the result of the second form to the symbol specified via :be"
+  `(progn
+     ,(car forms)
+     (let* ((,be ,(cadr forms)))
+       ,@(loop for form in (cddr forms)
+               collect (list be form))
+       ,be)))
+
 (defmacro lambda-if ((test &rest args) &body body)
   "Make a lambda that wraps an call to if"
   `(lambda ,args

@@ -8,5 +8,5 @@
            #:copy-slots #:transform-alist #:%json-pair-transform
            #:%default-pair-transform #:default-when
            #:transform-result #:slots-to-pairs #:normalize-html
-           #:destructuring-lambda))
+           #:destructuring-lambda #:let-each #:let-first #:let-second))
 
