@@ -8,11 +8,10 @@
            collect (list be form))
      ,be))
 
-(defmacro let-first ((&key (be '*)) &body forms)
+(defmacro let-first ((&key (be '*)) bound &body forms)
   "Bind the result of the first form to the symbol specified via :be"
-  `(let* ((,be ,(car forms)))
-     ,@(loop for form in (cdr forms)
-             collect (list be form))
+  `(let* ((,be ,bound))
+     ,@forms
      ,be))
 
 (defmacro let-second ((&key (be '*)) &body forms)
@@ -20,8 +19,7 @@
   `(progn
      ,(car forms)
      (let* ((,be ,(cadr forms)))
-       ,@(loop for form in (cddr forms)
-               collect (list be form))
+       ,@(cddr forms)
        ,be)))
 
 (defmacro lambda-if ((test &rest args) &body body)
