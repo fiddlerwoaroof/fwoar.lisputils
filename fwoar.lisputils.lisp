@@ -2,6 +2,14 @@
 
 (in-package #:fwoar.lisputils)
 
+(defmacro neither (&rest forms) `(not (or ,@forms)))
+
+(defmacro neither-null (&rest forms)
+  `(neither ,@(loop for form
+                    in forms
+                    collecting `(null ,form))))
+
+
 (defmacro let-each ((&key (be '*)) &body forms)
   "Bind each element successively to the symbol specified via :be"
   `(let* ,(loop for form in forms
@@ -65,6 +73,15 @@
                         ;; NOTE: REMEMBER! This call to #'GO is the "tail call"
                         (go start))))))
         (helper (reverse list) body t))))
+
+(defmacro m-lambda (sym &rest args)
+  (let ((arglist (loop for x in args
+                       unless (member x (list '&optional '&key '&rest))
+                       collect (ctypecase x
+                                          (cons                  (car x))
+                                          ((or symbol keyword string) x)))))
+    `(lambda (,@args)
+       (,sym ,@arglist))))
 
 (defmacro destructuring-lambda ((&rest args) &body body)
   "A lambda whose arguments can be lambda-lists to be destructured"
