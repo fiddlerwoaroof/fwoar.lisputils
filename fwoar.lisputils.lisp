@@ -186,3 +186,8 @@
            (lambda (x) (plump:serialize (plump:parse (plump:text x)) ss))
            html)))))
 
+(defmacro setfs (&body body)
+  "Make setf a bit nicer to use with paredit"
+  (list* 'setf (apply #'append body)))
+
+
