@@ -10,5 +10,5 @@
            #:transform-result #:slots-to-pairs #:normalize-html
            #:destructuring-lambda #:let-each #:let-first #:let-second
            #:neither #:neither-null #:m-lambda #:sets #:defparameters
-           #:setfs))
+           #:setfs #:prog1-let))
 

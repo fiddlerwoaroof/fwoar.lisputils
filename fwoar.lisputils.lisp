@@ -190,4 +190,9 @@
   "Make setf a bit nicer to use with paredit"
   (list* 'setf (apply #'append body)))
 
+(defmacro prog1-let ((&rest result-binding) &body body)
+  `(let (,@result-binding)
+     (prog1 (list ,@(mapcar #'car result-binding))
+       ,@body)))
+
 
