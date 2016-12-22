@@ -32,11 +32,13 @@
 
 (defmethod count-sequence ((sequence string) &key (test 'eql) (key 'identity))
   (let ((result (make-instance 'counter :test test :key key)))
-    (loop for c across sequence
-          do (incf (gethash (funcall key c)
+    (prog1 result
+      (map 'list
+           (lambda (c)
+             (incf (gethash (funcall key c)
                             (item-counts result)
-                            0))
-          finally (return result))))
+                            0)))
+           sequence))))
 
 (defmethod format-counts ((counter counter) (stream stream))
   (let ((result '()))
