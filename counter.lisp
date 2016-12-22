@@ -1,6 +1,3 @@
-(defpackage :fwoar.counter
-  (:use :cl))
-
 (in-package :fwoar.counter)
 
 (defclass counter ()

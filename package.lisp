@@ -1,5 +1,8 @@
 ;;;; package.lisp
 
+(defpackage :fwoar.counter
+  (:use :cl))
+
 (defpackage #:fwoar.lisputils
   (:use #:cl #:alexandria #:iterate)
   (:nicknames #:fw.lu)
@@ -12,7 +15,7 @@
            #:destructuring-lambda #:let-each #:let-first #:let-second
            #:neither #:neither-null #:m-lambda #:sets #:defparameters
            #:setfs #:prog1-let #:if-let* #:with #:aconsf #:ensure-list #:pick
-	   #:vector-destructuring-bind #:with-accessors*
-	   #:skip-values #:limit-values #:substitute-values
-	   #:op))
+           #:vector-destructuring-bind #:with-accessors*
+           #:skip-values #:limit-values #:substitute-values
+           #:op))
 
