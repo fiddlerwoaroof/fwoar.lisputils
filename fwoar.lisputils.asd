@@ -6,6 +6,16 @@
   :license "MIT"
   :serial t
   :components ((:file "package")
-               (:file "fwoar.lisputils"))
-  :depends-on (#:anaphora #:alexandria #:iterate #:plump))
+               (:file "fwoar.lisputils")
+	       (:file "hash-functions")
+	       (:file "multiple-values")
+	       (:file "clos-helpers")
+	       (:file "vector-utils"))
+  :depends-on (#:anaphora
+	       #:alexandria
+	       #:serapeum
+	       #:cl-containers
+	       #:iterate
+	       #:plump
+	       #:positional-lambda))
 

@@ -48,55 +48,96 @@
      ,@body))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun map-cons (cb cons)
+    (cond
+      ((null cons) '())
+      ((consp (cdr cons)) (cons (funcall cb (car cons))
+				(map-cons cb (cdr cons))))
+      (t (list (funcall cb (car cons))
+	       (funcall cb (cdr cons))))))
+
+  (defun generate-declarations-for (sym ignored ignorable)
+    (let ((ignores (list))
+	  (ignorables (list)))
+      (map-cons (op (cond ((member _1 ignorable)
+			   (push _1 ignorables))
+			  ((member _1 ignored)
+			   (push _1 ignores))))
+		(ensure-cons sym))
+      (if (or ignores ignorables)
+	  `((declare
+	     ,@(when ignores
+		 `((ignore ,@ignores)))
+	     ,@(when ignorables
+		 `((ignorable ,@ignorables)))))
+	  '())))
+
+  (defun find-ignored-vars (body)
+    (let ((possible-declarations (car body))
+	  (ignored-vars nil)
+	  (ignorable-vars nil))
+      (if (and (eq (car possible-declarations) 'declare)
+	       (consp (cadr possible-declarations)))
+	  (let* ((declarations (cdr possible-declarations)))
+	    (setf ignored-vars (cdr (assoc 'ignore declarations))
+		  ignorable-vars (cdr (assoc 'ignorable declarations))
+		  body (cdr body))))
+      (values ignored-vars
+	      ignorable-vars
+	      body)))
+
   (defun ensure-mapping (list)
     "Take a list and make sure that it's parseable as a let-style binding.
      Very handy for certain sorts of macros."
     (let ((symbols->mappings (lambda-cond (x)
-                               ((symbolp x) `(,x ,x))
-                               ((null (cdr x)) `(,#1=(car x) ,#1#))
-                               (t x))))
+					  ((symbolp x) `(,x ,x))
+					  ((null (cdr x)) `(,#1=(car x) ,#1#))
+					  (t x))))
       (mapcar symbols->mappings list)))
 
 
-    (defun rollup-list (list &optional body)
-      (labels ((helper (list &optional accum start)
-                 (tagbody
-                   start
-                   (cond
-                     ((endp list) (return-from rollup-list accum))
-                     (t (psetf accum  (cond
-                                        ((null accum) (car list))
-                                        (start `(,@(car list) ,@accum)) 
-                                        (t `(,@(car list) ,accum)))
-                               list (cdr list)
-                               start nil)
-                        ;; NOTE: REMEMBER! This call to #'GO is the "tail call"
-                        (go start))))))
-        (helper (reverse list) body t))))
+  (defun rollup-list (list &optional body)
+    (labels ((helper (list &optional accum start)
+	       (tagbody
+		start
+		  (cond
+		    ((endp list) (return-from rollup-list accum))
+		    (t (psetf accum  (cond
+				       ((null accum) (car list))
+				       (start `(,@(car list) ,@accum)) 
+				       (t `(,@(car list) ,accum)))
+			      list (cdr list)
+			      start nil)
+		       ;; NOTE: REMEMBER! This call to #'GO is the "tail call"
+		       (go start))))))
+      (helper (reverse list) body t))))
 
 (defmacro m-lambda (sym &rest args)
   (let ((arglist (loop for x in args
-                       unless (member x (list '&optional '&key '&rest))
-                       collect (ctypecase x
-                                          (cons                  (car x))
-                                          ((or symbol keyword string) x)))))
+		       unless (member x (list '&optional '&key '&rest))
+		       collect (ctypecase x
+					  (cons                  (car x))
+					  ((or symbol keyword string) x)))))
     `(lambda (,@args)
        (,sym ,@arglist))))
 
 (defmacro destructuring-lambda ((&rest args) &body body)
   "A lambda whose arguments can be lambda-lists to be destructured"
-  (let* ((args-syms (mapcar (alambda (gensym "arg"))
-                            args))
-         (args (mapcar #'list args args-syms))
-         (destructuring-expressions
-           (rollup-list
-               (loop for (arg arg-sym) in args
-                     collect (if (consp arg)
-                               `(destructuring-bind ,arg ,arg-sym)
-                               `(let ((,arg ,arg-sym)))))
-               body)))
-    `(lambda ,args-syms
-       ,destructuring-expressions)))
+  (multiple-value-bind (ignored ignorable body) (find-ignored-vars body)
+    (let* ((args-syms (mapcar (lambda (_) (declare (ignore _)) (gensym "arg"))
+			      args))
+	   (args (mapcar #'list args args-syms))
+	   (destructuring-expressions
+	    (rollup-list
+	     (loop for (arg arg-sym) in args
+		collect (if (consp arg)
+			    `(destructuring-bind ,arg ,arg-sym
+			       ,@(generate-declarations-for arg ignored ignorable))
+			    `(let ((,arg ,arg-sym))
+			       ,@(generate-declarations-for arg ignored ignorable))))
+	     body)))
+      `(lambda ,args-syms
+	 ,destructuring-expressions))))
 
 
 ;;; CASES:::
@@ -190,9 +231,37 @@
   "Make setf a bit nicer to use with paredit"
   (list* 'setf (apply #'append body)))
 
+(defmacro prog2-let (first-form (&rest result-binding) &body body)
+  "Execute a form, make a bunch of bindings and retern the bound values via prog1 after executing body"
+  `(progn ,first-form
+	  (let (,@result-binding)
+	    (prog1 (list ,@(mapcar #'car result-binding))
+	      ,@body))))
+
 (defmacro prog1-let ((&rest result-binding) &body body)
+  "Bind a bunch of symbols to values and return them via prog1"
   `(let (,@result-binding)
      (prog1 (list ,@(mapcar #'car result-binding))
        ,@body)))
 
+(defmacro if-let* ((&rest bindings) &body (then-form &optional else-form))
+  "Like if-let, but sets bindings sequentially.  Doesn't short-circuit."
+  `(let* ,bindings
+     (if (and ,@(mapcar #'car bindings))
+       ,then-form
+       ,else-form)))
+
+(defmacro with ((var val) &body body)
+  "A stripped down let for binding a single name"
+  `(let ((,var ,val))
+     ,@body))
+
+(define-modify-macro aconsf (key datum)
+  (lambda (alist key datum)
+    (acons key datum alist)))
+
+;(defun ensure-list (val)
+;  (typecase val
+;    (list val)
+;    (t (list val))))
 
