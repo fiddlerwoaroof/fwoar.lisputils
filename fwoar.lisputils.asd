@@ -18,5 +18,6 @@
                (:file "multiple-values")
                (:file "clos-helpers")
                (:file "counter")
-               (:file "vector-utils")))
+               (:file "vector-utils")
+               (:file "string-utils/string-utils")))
 

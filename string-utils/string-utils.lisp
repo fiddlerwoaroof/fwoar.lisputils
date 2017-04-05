@@ -1,6 +1,8 @@
-(defpackage :string-utils
-  (:use :cl))
-(in-package :string-utils)
+(defpackage :fwoar.string-utils
+  (:use :cl)
+  (:export #:get-part-modifier #:split))
+
+(in-package :fwoar.string-utils)
 
 (deftype array-length ()
   `(integer 0 ,array-dimension-limit))

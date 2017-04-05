@@ -171,8 +171,8 @@
   (once-only (from to)
     `(progn
        (setf ,@(apply #'append
-                      (iterate (for (fro-slot to-slot) in (ensure-mapping slots))
-                               (collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot))))))
+                      (iterate:iterate (for (fro-slot to-slot) in (ensure-mapping slots))
+                                       (collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot))))))
        ,to)))
 
 (defun transform-alist (function alist)
@@ -206,15 +206,15 @@
 (defun make-pairs (symbols)
   ;TODO: does this duplicate ensure-mapping?
   (cons 'list
-        (iterate (for (key value) in symbols)
-                 (collect `(list* ,(symbol-name key) ,value)))))
+        (iterate:iterate (iterate:for (key value) in symbols)
+                         (iterate:collect `(list* ,(symbol-name key) ,value)))))
 
 (defmacro slots-to-pairs (obj (&rest slots))
   "Produce a alist from a set of object slots and their values"
   (once-only (obj)
     (let* ((slots (ensure-mapping slots))
-           (bindings (iterate (for (slot v &key bind-from) in slots)
-                              (collect (or bind-from slot)))))
+	   (bindings (iterate:iterate (iterate:for (slot v &key bind-from) in slots)
+				      (iterate:collect (or bind-from slot)))))
       `(with-slots ,bindings ,obj
          ,(make-pairs slots)))))
 
@@ -265,3 +265,45 @@
 ;    (list val)
 ;    (t (list val))))
 
+(defun map-tree* (fun tree &optional (tag nil tagp))
+  "Walk FUN over TREE and build a tree from the results.
+
+The new tree may share structure with the old tree.
+
+     (eq tree (map-tree #'identity tree)) => T
+
+FUN can skip the current subtree with (throw TAG SUBTREE), in which
+case SUBTREE will be used as the value of the subtree."
+  (let ((fun (ensure-function fun)))
+    (labels ((map-tree (tree)
+	       (let ((tree2 (funcall fun tree)))
+		 (if (atom tree2)
+		     tree2
+		     (serapeum::reuse-cons (map-tree (car tree2))
+				 (map-tree (cdr tree2))
+				 tree2))))
+	     (map-tree/tag (tree tag)
+	       (catch tag
+		 (let ((tree2 (funcall fun tree)))
+		   (if (atom tree2)
+		       tree2
+		       (serapeum::reuse-cons (map-tree/tag (car tree2) tag)
+				   (map-tree/tag (cdr tree2) tag)
+				   tree2))))))
+      (if tagp
+	  (map-tree/tag tree tag)
+	  (map-tree tree)))))
+
+(defun replace-subtree (predicate value tree)
+  (let ((spliced-value nil))
+    (flet ((mapper (x)
+	     (typecase x
+	       (cons
+		(if (funcall predicate x)
+		    (progn
+		      (setf spliced-value x)
+		      (throw 'bail value))
+		    x))
+	       (t x))))
+      (let ((result (map-tree* #'mapper tree 'bail)))
+	(values result spliced-value)))))

@@ -4,9 +4,10 @@
   (:use :cl))
 
 (defpackage #:fwoar.lisputils
-  (:use #:cl #:alexandria #:iterate)
+  (:use #:cl #:alexandria)
   (:nicknames #:fw.lu)
   (:import-from #:serapeum #:op)
+  (:shadow #:with)
   (:export #:lambda-if #:lambda-cond #:alambda #:rollup-list
            #:ensure-mapping #:alist-string-hash-table #:make-pairs
            #:copy-slots #:transform-alist #:%json-pair-transform
@@ -17,5 +18,7 @@
            #:setfs #:prog1-let #:if-let* #:with #:aconsf #:ensure-list #:pick
            #:vector-destructuring-bind #:with-accessors*
            #:skip-values #:limit-values #:substitute-values
-           #:op))
+           #:op
+	   #:pick/r
+	   #:pick-error))
 
