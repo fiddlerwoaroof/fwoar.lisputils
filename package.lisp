@@ -15,10 +15,8 @@
            #:transform-result #:slots-to-pairs #:normalize-html
            #:destructuring-lambda #:let-each #:let-first #:let-second
            #:neither #:neither-null #:m-lambda #:sets #:defparameters
-           #:setfs #:prog1-let #:if-let* #:with #:aconsf #:ensure-list #:pick
-           #:vector-destructuring-bind #:with-accessors*
-           #:skip-values #:limit-values #:substitute-values
-           #:op
-	   #:pick/r
-	   #:pick-error))
+           #:setfs #:prog1-let #:prog1-bind #:if-let* #:with #:aconsf
+           #:ensure-list #:pick #:vector-destructuring-bind #:with-accessors*
+           #:skip-values #:limit-values #:substitute-values #:op #:pick/r
+           #:pick-error))
 

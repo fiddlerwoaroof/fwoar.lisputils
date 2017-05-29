@@ -244,6 +244,11 @@
      (prog1 (list ,@(mapcar #'car result-binding))
        ,@body)))
 
+(defmacro prog1-bind ((var val) &body body)
+  `(let ((,var ,val))
+     (prog1 ,var
+       ,@body)))
+
 (defmacro if-let* ((&rest bindings) &body (then-form &optional else-form))
   "Like if-let, but sets bindings sequentially.  Doesn't short-circuit."
   `(let* ,bindings
@@ -307,3 +312,4 @@ case SUBTREE will be used as the value of the subtree."
 	       (t x))))
       (let ((result (map-tree* #'mapper tree 'bail)))
 	(values result spliced-value)))))
+
