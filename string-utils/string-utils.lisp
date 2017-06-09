@@ -90,13 +90,16 @@
 	(loop 
 	   for end-pos = (find-pos start-pos)
 	   while end-pos 
-	   for num-parts from 1 below count
+	   for num-parts from 0 to count
 	   do
 	     (vector-push (subseq string start-pos end-pos) parts)
 	     (setf start-pos (1+ end-pos))
 	   finally
 	     (when (< start-pos (length string))
 	       (vector-push (subseq string start-pos)
+			    parts))
+	     (when (eql divider (aref string (1- (length string))))
+	       (vector-push (make-string 0)
 			    parts)))))))
 
 (defmacro twice (&body body)
