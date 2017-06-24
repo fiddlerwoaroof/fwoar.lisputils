@@ -158,15 +158,18 @@
 	     (vector-push-extend (subseq string (+ pattern-length end-pos)) parts))
 	   (return parts)))))
 
-(defun split (divider string &key count (test nil))
+(defun split (divider string &key count (test nil) (type nil type-p))
   (declare (optimize #+dev (debug 3) (speed 3) (space 3)))
   (unless test
     (setf test
 	  (typecase divider
 	    (string 'equal)
 	    (t 'eql))))
-  (etypecase divider
-    (character (%split-on-char divider string :count count :test test))
-    (string (if (= 1 (length divider))
-		(%split-on-char (aref divider 0) string :count count :test test)
-		(%split-on-string divider string :count count :test test)))))
+  (let ((result (etypecase divider
+		  (character (%split-on-char divider string :count count :test test))
+		  (string (if (= 1 (length divider))
+			      (%split-on-char (aref divider 0) string :count count :test test)
+			      (%split-on-string divider string :count count :test test))))))
+    (if type-p
+	(coerce result type)
+	result)))
