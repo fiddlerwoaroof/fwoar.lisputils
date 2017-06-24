@@ -262,9 +262,9 @@
   `(let ((,var ,val))
      ,@body))
 
-(define-modify-macro aconsf (key datum)
-  (lambda (alist key datum)
-    (acons key datum alist)))
+(flet ((do-acons  (alist key datum)
+         (acons key datum alist)))
+  (define-modify-macro aconsf (key datum) do-acons))
 
 ;(defun ensure-list (val)
 ;  (typecase val
