@@ -23,5 +23,4 @@
            #:setfs #:prog1-let #:prog1-bind #:if-let* #:with #:aconsf
            #:ensure-list #:pick #:vector-destructuring-bind #:with-accessors*
            #:skip-values #:limit-values #:substitute-values #:op #:pick/r
-           #:pick-error
-           #:twice)) 
+           #:pick-error #:twice #:glambda)) 
