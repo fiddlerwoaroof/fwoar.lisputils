@@ -11,7 +11,8 @@
                #:cl-containers
                #:iterate
                #:plump
-               #:positional-lambda)
+               #:positional-lambda
+               #:should-test)
   :components ((:file "package")
                (:file "fwoar.lisputils")
                (:file "hash-functions")
@@ -19,5 +20,8 @@
                (:file "clos-helpers")
                (:file "counter")
                (:file "vector-utils")
-               (:file "string-utils/string-utils")))
+               (:file "string-utils/package")
+               (:file "string-utils/string-utils")
+               (:file "string-utils/test")
+               (:file "glambda")))
 
