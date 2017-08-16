@@ -5,6 +5,18 @@
      (defun ,name ,args
        ,@body)))
 
+(defun-ct get-specializers (specialized-lambda-list)
+  (flet ((get-specializer (specializer)
+           (etypecase specializer
+             (symbol (find-class specializer))
+             (cons (ecase (car specializer)
+                     ('eql (closer-mop:intern-eql-specializer (cdr specializer))))))))
+    (mapcar (lambda (specialized-arg)
+              (if (listp specialized-arg)
+                  (get-specializer (cadr specialized-arg))
+                  (find-class t)))
+            specialized-lambda-list)))
+
 (defun-ct make-anonymous-generic-function (lambda-list methods)
   (declare (optimize (debug 3)))
   (let* ((gf (make-instance 'standard-generic-function
@@ -20,7 +32,7 @@
            (add-method gf
                        (apply #'make-instance mc
                               :function (compile nil method-lambda)
-                              :specializers specializers
+                              :specializers (get-specializers specializers)
                               :qualifiers qualifiers
                               :lambda-list lambda-list
                               initargs))))))
@@ -33,25 +45,13 @@
        (return (values items
                        (cons item rest)))))
 
-(defun-ct get-specializers (specialized-lambda-list)
-  (flet ((get-specializer (specializer)
-           (etypecase specializer
-             (symbol (find-class specializer))
-             (cons (ecase (car specializer)
-                     ('eql (closer-mop:intern-eql-specializer (cdr specializer))))))))
-    (mapcar (lambda (specialized-arg)
-              (if (listp specialized-arg)
-                  (get-specializer (cadr specialized-arg))
-                  (find-class t)))
-            specialized-lambda-list)))
-
 (defun-ct get-methods (method-definition-list)
   (loop for (keyword . rest) in method-definition-list
      unless (eq keyword :method) do
        (error "method definitions must begin with the :METHOD keyword")
      collect
        (multiple-value-bind (qualifiers rest) (take-until #'listp rest)
-         (list (get-specializers (car rest))
+         (list (car rest)
                qualifiers
                (cdr rest)))))
 
