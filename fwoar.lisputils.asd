@@ -23,5 +23,6 @@
                (:file "string-utils/package")
                (:file "string-utils/string-utils")
                (:file "string-utils/test")
+               (:file "patmatch")
                (:file "glambda")))
 

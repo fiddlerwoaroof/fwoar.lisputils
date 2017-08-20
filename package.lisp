@@ -7,12 +7,18 @@
   (:use :cl :alexandria)
   (:export :glambda))
 
+(defpackage :patmatch
+  (:use :cl :alexandria :serapeum)
+  (:export :let-pat*
+           :handle-pattern))
+
 (defpackage #:fwoar.lisputils
   (:use #:cl #:alexandria)
   (:nicknames #:fw.lu)
-  (:import-from #:serapeum #:op)
   (:shadow #:with)
+  (:import-from #:serapeum #:op)
   (:import-from :fwoar.anonymous-gf :glambda)
+  (:import-from :patmatch :let-pat*)
   (:export #:lambda-if #:lambda-cond #:alambda #:rollup-list
            #:ensure-mapping #:alist-string-hash-table #:make-pairs
            #:copy-slots #:transform-alist #:%json-pair-transform
