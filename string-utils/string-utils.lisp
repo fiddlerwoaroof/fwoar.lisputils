@@ -49,7 +49,8 @@
 
 ;; TODO: implement test
 (defun %split-on-char (divider string &key count (test nil))
-  (declare (optimize #+dev (debug 3) (speed 3) (space 2))
+  (declare (optimize #+dev (debug 3) #+dev (speed 0) #+dev (space 0)
+                     #-dev (speed 3) #-dev(space 2))
            (type (or null array-length) count)
            (type (or null function symbol) test)
            (type character divider)
@@ -60,21 +61,25 @@
   (check-type string simple-string)
 
   (flet ((count-splits (string)
-           (declare (optimize (speed 3))
+           (declare (optimize #+dev (debug 3) #+dev (speed 0) #+dev (space 0)
+                              #-dev (speed 3) #-dev(space 2))
                     (type simple-string string))
-           (do* ((x (the array-length 0) (1+ x))
-                 (cur-char #1=(aref string x) #1#)
-                 (result (the array-length
-                              (if (char= cur-char divider)
-                                  1
-                                  0))
-                         (if (char= cur-char divider)
-                             (1+ result)
-                             result)))
-                ((= x (1- (length string))) (1+ result))
-             (declare (type array-length result))))
+           (if (/= 0 (length string))
+               (do* ((x (the array-length 0) (1+ x))
+                     (cur-char #1=(aref string x) #1#)
+                     (result (the array-length
+                                  (if (char= cur-char divider)
+                                      1
+                                      0))
+                             (if (char= cur-char divider)
+                                 (1+ result)
+                                 result)))
+                    ((= x (1- (length string))) (1+ result))
+                 (declare (type array-length result)))
+               0))
          (find-pos (start-pos)
-           (declare (optimize (speed 3))
+           (declare (optimize #+dev (debug 3) #+dev (speed 0) #+dev (space 0)
+                     #-dev (speed 3) #-dev(space 2))
                     (type array-index start-pos))
            (etypecase test
              (function (position divider string :start start-pos :test test))
@@ -85,7 +90,7 @@
       (setf count (count-splits string)))
 
     (check-type count array-length)
-    (let ((parts (make-array count :fill-pointer 0))
+    (let ((parts (make-array (max count 1) :fill-pointer 0))
           (start-pos (the fixnum 0)))
       (declare (dynamic-extent start-pos))
       (prog1 parts
@@ -97,10 +102,11 @@
              (setf start-pos (1+ end-pos))
            while (< (length parts) (1- count))
            finally
-             (when (and end-pos count)
-               (vector-push (subseq string start-pos)
-                            parts))
-             )))))
+             (cond ((and end-pos count)
+                    (vector-push (subseq string start-pos)
+                                 parts))
+                   ((not end-pos)
+                    (vector-push "" parts))))))))
 
 (defun %split-on-string (divider string &key count (test nil))
   (declare (optimize #+dev (debug 3) (speed 3))

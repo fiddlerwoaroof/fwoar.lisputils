@@ -1,7 +1,9 @@
 (in-package :fwoar.string-utils)
 
 (defun vos-equal (a b)
-  (every 'equal a b))
+  (and (= (length a)
+          (length b))
+       (every 'equal a b)))
 
 (progn
   (st:deftest string-split-as-expected-with-test ()
@@ -36,6 +38,10 @@
     (st:should be vos-equal
                #("a" "b" "c" "d")
                (%split-on-string " " "a b c d")))
+  (st:deftest string-split-empty-string-as-expected ()
+    (st:should be vos-equal
+               #("")
+               (%split-on-string "/" "")))
 
   (st:deftest char-split-as-expected-with-test ()
     (st:should be vos-equal
@@ -65,4 +71,9 @@
     (st:should be vos-equal
                #("a" "b" "c" "d")
                (%split-on-char #\space "a b c d")))
+
+  (st:deftest char-split-empty-string-as-expected ()
+    (st:should be vos-equal
+               #("")
+               (%split-on-char #\/ "")))
   )
