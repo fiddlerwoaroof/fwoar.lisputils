@@ -34,7 +34,7 @@
              (when (closer-mop:subclassp pattern 'standard-object)
                (apply #'handle-pattern
                       (closer-mop:class-prototype
-                       (find-class pattern))
+                       (closer-mop:ensure-finalized (find-class pattern)))
                       form
                       args))))) 
 
@@ -90,12 +90,13 @@
             (declare (ignore a))
             b)))
 
-(defclass test-base ()
-  ((a :initform 1)))
-(defclass test-sub1 (test-base)
-  ())
-(defclass test-sub2 (test-base)
-  ((b :initform 2)))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defclass test-base ()
+    ((a :initform 1)))
+  (defclass test-sub1 (test-base)
+    ())
+  (defclass test-sub2 (test-base)
+    ((b :initform 2))))
 
 (defmethod patmatch:handle-pattern append ((pattern test-base) form &rest args)
   (alexandria:when-let ((arg (getf args :a)))
