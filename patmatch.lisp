@@ -96,7 +96,11 @@
   (defclass test-sub1 (test-base)
     ())
   (defclass test-sub2 (test-base)
-    ((b :initform 2))))
+    ((b :initform 2)))
+  (closer-mop:ensure-class 'test-base)
+  (closer-mop:ensure-class 'test-sub1)
+  (closer-mop:ensure-class 'test-sub2)
+  )
 
 (defmethod patmatch:handle-pattern append ((pattern test-base) form &rest args)
   (alexandria:when-let ((arg (getf args :a)))
