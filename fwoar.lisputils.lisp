@@ -194,6 +194,14 @@
 
 (defmacro default-when (default test &body body)
   "return the default unless the test is true"
+  (warn "default-when is deprecated, renamed to default-unless")
+  (once-only (default)
+    `(or (when ,test
+           ,@body)
+         ,default)))
+
+(defmacro default-unless (default test &body body)
+  "return the default unless the test is true"
   (once-only (default)
     `(or (when ,test
            ,@body)
