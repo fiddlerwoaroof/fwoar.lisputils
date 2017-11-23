@@ -10,8 +10,10 @@
                #:serapeum
                #:cl-containers
                #:iterate
+               #-lispworks
                #:plump
                #:positional-lambda
+               #-lispworks
                #:should-test)
   :components ((:file "package")
                (:file "fwoar.lisputils")
@@ -22,7 +24,9 @@
                (:file "vector-utils")
                (:file "string-utils/package")
                (:file "string-utils/string-utils")
+               #-lispworks
                (:file "string-utils/test")
+               #-lispworks
                (:file "patmatch")
                (:file "glambda")))
 
