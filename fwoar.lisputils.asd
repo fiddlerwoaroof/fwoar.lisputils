@@ -7,7 +7,7 @@
   :serial t
   :depends-on (#:anaphora
                #:alexandria
-               #:serapeum
+               #+null #:serapeum
                #:cl-containers
                #:iterate
                #-lispworks

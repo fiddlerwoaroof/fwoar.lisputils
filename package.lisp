@@ -4,19 +4,18 @@
   (:use :cl))
 
 (defpackage :fwoar.anonymous-gf
-  (:use :cl :alexandria)
+  (:use :cl)
   (:export :glambda))
 
 (defpackage :patmatch
-  (:use :cl :alexandria :serapeum)
+  (:use :cl)
   (:export :let-pat*
            :handle-pattern))
 
 (defpackage #:fwoar.lisputils
-  (:use #:cl #:alexandria)
+  (:use #:cl)
   (:nicknames #:fw.lu)
   (:shadow #:with)
-  (:import-from #:serapeum #:op)
   (:import-from :fwoar.anonymous-gf :glambda)
   (:import-from :patmatch :let-pat*)
   (:export #:lambda-if #:lambda-cond #:alambda #:rollup-list
