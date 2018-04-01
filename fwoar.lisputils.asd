@@ -7,14 +7,12 @@
   :serial t
   :depends-on (#:anaphora
                #:alexandria
-               #+null #:serapeum
+               #-lispworks #:serapeum
                #:cl-containers
                #:iterate
-               #-lispworks
-               #:plump
+               #-lispworks #:plump
                #:positional-lambda
-               #-lispworks
-               #:should-test)
+               #-lispworks #:should-test)
   :components ((:file "package")
                (:file "fwoar.lisputils")
                (:file "hash-functions")

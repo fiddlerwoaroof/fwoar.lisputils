@@ -123,6 +123,11 @@
     `(lambda (,@args)
        (,sym ,@arglist))))
 
+(defun get-ignored-vars (body)
+  (let ((declarations (cdr (assoc 'declare body))))
+    (values (cdr (assoc 'ignore declarations))
+            (cdr (assoc 'ignorable declarations)))))
+
 (defmacro destructuring-lambda ((&rest args) &body body)
   "A lambda whose arguments can be lambda-lists to be destructured"
   (multiple-value-bind (ignored ignorable body) (find-ignored-vars body)
@@ -134,7 +139,7 @@
              (loop for (arg arg-sym) in args
                 collect (if (consp arg)
                             `(destructuring-bind ,arg ,arg-sym
-                               ,@(generate-declarations-for arg ignored ignorable))
+                               (declare (ignore ,@ignored) (ignorable ,@ignorable)))
                             `(let ((,arg ,arg-sym))
                                ,@(generate-declarations-for arg ignored ignorable))))
              body)))
@@ -170,11 +175,11 @@
 (defmacro copy-slots (slots from to)
   "Given a list of slots specified as let-style bindings, copy them
    from one object to another."
-  (once-only (from to)
+  (alexandria:once-only (from to)
     `(progn
        (setf ,@(apply #'append
-                      (iterate:iterate (for (fro-slot to-slot) in (ensure-mapping slots))
-                                       (collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot))))))
+                      (iterate:iterate (iterate:for (fro-slot to-slot) iterate:in (ensure-mapping slots))
+                                       (iterate:collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot))))))
        ,to)))
 
 (defun transform-alist (function alist)
@@ -185,25 +190,25 @@
 (defun %json-pair-transform (k v)
   "Ugly hack to make jonathan work correctly with string values.
    TODO: move this elsewhere"
-  (cons (make-keyword (string-downcase k))
+  (cons (alexandria:make-keyword (string-downcase k))
         (typecase v
           (string (coerce v 'simple-string))
           (t v))))
 
 (defun %default-pair-transform (k v)
-  (cons (make-keyword (string-upcase k)) v))
+  (cons (alexandria:make-keyword (string-upcase k)) v))
 
 (defmacro default-when (default test &body body)
   "return the default unless the test is true"
   (warn "default-when is deprecated, renamed to default-unless")
-  (once-only (default)
+  (alexandria:once-only (default)
     `(or (when ,test
            ,@body)
          ,default)))
 
 (defmacro default-unless (default test &body body)
   "return the default unless the test is true"
-  (once-only (default)
+  (alexandria:once-only (default)
     `(or (when ,test
            ,@body)
          ,default)))
@@ -220,8 +225,9 @@
                          (iterate:collect `(list* ,(symbol-name key) ,value)))))
 
 (defmacro slots-to-pairs (obj (&rest slots))
+  (declare (optimize (debug 3)))
   "Produce a alist from a set of object slots and their values"
-  (once-only (obj)
+  (alexandria:once-only (obj)
     (let* ((slots (ensure-mapping slots))
            (bindings (iterate:iterate (iterate:for (slot v &key bind-from) in slots)
                                       (iterate:collect (or bind-from slot)))))
@@ -272,9 +278,9 @@
   `(let ((,var ,val))
      ,@body))
 
-(flet ((do-acons  (alist key datum)
-         (acons key datum alist)))
-  (define-modify-macro aconsf (key datum) do-acons))
+(defun do-acons (alist key datum)
+  (acons key datum alist))
+(define-modify-macro aconsf (key datum) do-acons)
 
                                         ;(defun ensure-list (val)
                                         ;  (typecase val
@@ -295,7 +301,7 @@ The new tree may share structure with the old tree.
 
 FUN can skip the current subtree with (throw TAG SUBTREE), in which
 case SUBTREE will be used as the value of the subtree."
-  (let ((fun (ensure-function fun)))
+  (let ((fun (alexandria:ensure-function fun)))
     (labels ((map-tree (tree)
                (let ((tree2 (funcall fun tree)))
                  (if (atom tree2)
