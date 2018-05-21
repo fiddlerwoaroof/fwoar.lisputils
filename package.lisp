@@ -13,7 +13,7 @@
            :handle-pattern))
 
 (defpackage #:fwoar.lisputils
-  (:use #:cl)
+  (:use #:cl #:alexandria)
   (:nicknames #:fw.lu)
   (:shadow #:with)
   (:import-from :fwoar.anonymous-gf :glambda)
@@ -30,4 +30,10 @@
            #+null #:ensure-list #:pick #:vector-destructuring-bind #:with-accessors*
            #:skip-values #:limit-values #:substitute-values #:op #:pick/r
            #:pick-error #:twice #:glambda
-           #:default-unless)) 
+           #:default-unless
+           #:transform-first-value)) 
+
+(defpackage :fwoar.lisputils.shortcuts
+  (:use :cl :fwoar.lisputils)
+  (:nicknames #:fw.lu.t)
+  (:export :~>))

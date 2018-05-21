@@ -7,7 +7,7 @@
   :serial t
   :depends-on (#:anaphora
                #:alexandria
-               #-lispworks #:serapeum
+               #:serapeum
                #:cl-containers
                #:iterate
                #-lispworks #:plump
@@ -22,6 +22,8 @@
                (:file "vector-utils")
                (:file "string-utils/package")
                (:file "string-utils/string-utils")
+               #-lispworks
+               (:file "non-lispworks")
                #-lispworks
                (:file "string-utils/test")
                #-lispworks

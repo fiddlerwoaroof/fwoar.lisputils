@@ -29,3 +29,14 @@
     `(multiple-value-call #'values
        ,@values
        (skip-values ,num-values ,call))))
+
+(defmacro transform-first-value ((transform form))
+  `(let ((values (multiple-value-list ,form)))
+     (values-list
+      (list* (,transform (car values))
+             (cdr values)))))
+
+(in-package :fwoar.lisputils.shortcuts)
+
+(defmacro ~> ((transform form))
+  `(transform-first-value (,transform ,form)))

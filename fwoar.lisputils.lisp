@@ -234,15 +234,6 @@
       `(with-slots ,bindings ,obj
          ,(make-pairs slots)))))
 
-(defun normalize-html (html)
-  "Convert possibly bad HTML to sane HTML as best as possible."
-  (let ((plump:*tag-dispatchers* plump:*html-tags*))
-    (with-output-to-string (ss)
-      (prog1 ss
-        (map 'vector
-             (lambda (x) (plump:serialize (plump:parse (plump:text x)) ss))
-             html)))))
-
 (defmacro setfs (&body body)
   "Make setf a bit nicer to use with paredit"
   (list* 'setf (apply #'append body)))
@@ -282,16 +273,11 @@
   (acons key datum alist))
 (define-modify-macro aconsf (key datum) do-acons)
 
-                                        ;(defun ensure-list (val)
-                                        ;  (typecase val
-                                        ;    (list val)
-                                        ;    (t (list val))))
+;;(defun ensure-list (val)
+;;  (typecase val
+;;    (list val)
+;;    (t (list val))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (when (find-package :serapeum)
-    (pushnew :serapeum-present *features*)))
-
-#+serapeum-present
 (defun map-tree* (fun tree &optional (tag nil tagp))
   "Walk FUN over TREE and build a tree from the results.
 
