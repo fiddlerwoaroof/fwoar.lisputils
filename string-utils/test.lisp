@@ -76,4 +76,9 @@
     (st:should be vos-equal
                #("")
                (%split-on-char #\/ "")))
+
+  (st:deftest char-split-no-sep-returns-vec-with-contents ()
+    (st:should be vos-equal
+               #("Bacon")
+               (%split-on-char #\. "Bacon")))
   )

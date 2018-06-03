@@ -102,7 +102,8 @@
              (setf start-pos (1+ end-pos))
            while (< (length parts) (1- count))
            finally
-             (cond ((and end-pos count)
+             (cond ((or (and end-pos count)
+                        (< start-pos (length string)))
                     (vector-push (subseq string start-pos)
                                  parts))
                    ((not end-pos)
