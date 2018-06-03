@@ -249,7 +249,7 @@
 (defmacro prog1-let ((&rest result-binding) &body body)
   "Bind a bunch of symbols to values and return them via prog1"
   `(let (,@result-binding)
-     (prog1 (list ,@(mapcar #'car result-binding))
+     (multiple-value-prog1 (values ,@(mapcar #'car result-binding))
        ,@body)))
 
 (defmacro prog1-bind ((var val) &body body)
