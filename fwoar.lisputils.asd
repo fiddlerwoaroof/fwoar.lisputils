@@ -18,6 +18,7 @@
                #-lispworks #:should-test)
   :components ((:file "package")
                (:file "fwoar.lisputils")
+               (:file "lexical-compare")
                (:file "hash-functions")
                (:file "multiple-values")
                (:file "clos-helpers")
