@@ -1,6 +1,9 @@
 (defpackage :fwoar.lexical-compare
   (:use :cl )
-  (:export ))
+  (:export
+   #:lexi-compare
+   #:apply-when
+   #:natural-sort-strings))
 (in-package :fwoar.lexical-compare)
 
 (defun parse-mixed-string (str)
@@ -35,15 +38,6 @@
   (:method ((a string) (b string))
     (string= a b)))
 
-(defun apply-when (fun &rest args)
-  (when (car (last args))
-    (apply 'apply fun args)))
-
-(defun lexi-compare (a b)
-  (apply-when 'part<
-              (car
-               (serapeum:drop-while (serapeum:op (apply 'part= _1))
-                                    (mapcar 'list a b)))))
 (st:deftest test-parse-mixed-string ()
   (st:should be equal
              (list)
@@ -64,6 +58,16 @@
   (st:should be equal
              (list "asdf" 1234 "a")
              (parse-mixed-string "asdf1234a")))
+
+(defun apply-when (fun &rest args)
+  (when (car (last args))
+    (apply 'apply fun args)))
+
+(defun lexi-compare (a b &optional (elem-compare 'part<))
+  (apply-when elem-compare
+              (car
+               (serapeum:drop-while (serapeum:op (apply 'part= _1))
+                                    (mapcar 'list a b)))))
 
 (defun natural-sort-strings (a b)
   (lexi-compare (parse-mixed-string a)
