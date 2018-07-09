@@ -1,6 +1,9 @@
 (uiop:define-package :fwoar.bin-parser
     (:use :cl)
-    (:mix :fw.lu :alexandria :serapeum))
+  (:mix :fw.lu :alexandria :serapeum)
+  (:export :extract
+           :le->int
+           :read-bytes))
 
 (in-package :fwoar.bin-parser)
 
