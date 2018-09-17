@@ -198,6 +198,24 @@
 (defun %default-pair-transform (k v)
   (cons (alexandria:make-keyword (string-upcase k)) v))
 
+(defun find-nonoperator-symbols (form)
+  (alexandria:flatten
+   (remove-duplicates
+    (typecase form
+      (symbol (list form))
+      (cons (append
+             (when (consp (car form))
+               (find-nonoperator-symbols (car form)))
+             (typecase (cdr form)
+               (symbol (list (cdr form)))
+               (cons (loop for thing in (cdr form)
+                        append (find-nonoperator-symbols thing))))))))))
+
+(defmacro may ((op arg))
+  (alexandria:once-only (arg)
+    `(when ,arg
+       (,op ,arg))))
+
 (defmacro default-when (default test &body body)
   "return the default unless the test is true"
   (warn "default-when is deprecated, renamed to default-unless")

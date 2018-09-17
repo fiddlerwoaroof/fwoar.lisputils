@@ -31,7 +31,8 @@
            #:skip-values #:limit-values #:substitute-values #:op #:pick/r
            #:pick-error #:twice #:glambda
            #:default-unless
-           #:transform-first-value)) 
+           #:transform-first-value
+           #:may)) 
 
 (defpackage :fwoar.lisputils.shortcuts
   (:use :cl :fwoar.lisputils)
