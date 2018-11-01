@@ -1,9 +1,10 @@
 (uiop:define-package :fwoar.bin-parser
     (:use :cl)
   (:mix :fw.lu :alexandria :serapeum)
-  (:export :extract
-           :le->int
-           :read-bytes))
+  (:export :le->int
+           :read-bytes
+           :extract
+           :extract-let))
 
 (in-package :fwoar.bin-parser)
 
@@ -81,3 +82,13 @@
           (append next-segment
                   (extract remainder s (append next-segment bindings)))
           next-segment))))
+
+(defmacro extract-let ((&rest bindings) parser s &body body)
+  (labels ((collect-binding (binding-spec)
+             (destructuring-bind (name target) binding-spec
+               `(,name (cdr (assoc ,target it)))))
+           (collect-bindings ()
+             (mapcar #'collect-binding bindings)))
+    `(let* ((it (extract ,parser ,s))
+            ,@(collect-bindings))
+       ,@body)))
