@@ -1,7 +1,7 @@
-;;;; fwoar.lisputils.asd
+;;;; fwoar-lisputils.asd
 (in-package :asdf-user)
 
-(defsystem #:fwoar.lisputils/string-utils
+(defsystem #:fwoar-lisputils/string-utils
   :description "A binary parser"
   :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
   :license "MIT"
@@ -11,7 +11,7 @@
                #-lispworks
                (:file "string-utils/test" :depends-on ("string-utils/string-utils"))))
 
-(asdf:defsystem #:fwoar.lisputils
+(asdf:defsystem #:fwoar-lisputils
   :description "Some utilities common to other libraries I'm writing"
   :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
   :license "MIT"
@@ -24,12 +24,12 @@
                #:serapeum
                #:cl-containers
                #:iterate
-               #:fwoar.lisputils/string-utils
+               #:fwoar-lisputils/string-utils
                #-lispworks #:plump
                #:positional-lambda
                #-lispworks #:should-test)
   :components ((:file "package")
-               (:file "fwoar.lisputils")
+               (:file "fwoar-lisputils")
                (:file "lexical-compare")
                (:file "hash-functions")
                (:file "multiple-values")
@@ -42,11 +42,11 @@
                (:file "patmatch")
                (:file "glambda")))
 
-(defsystem #:fwoar.lisputils/bin-parser
+(defsystem #:fwoar-lisputils/bin-parser
   :description "A binary parser"
   :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
   :license "MIT"
-  :depends-on (:fwoar.lisputils
+  :depends-on (:fwoar-lisputils
                :alexandria
                :serapeum)
   :components ((:file "bin-parser")))

@@ -339,3 +339,8 @@ case SUBTREE will be used as the value of the subtree."
       (let ((result (map-tree* #'mapper tree 'bail)))
         (values result spliced-value)))))
 
+
+(defmacro defun-ct (name (&rest args) &body body)
+  `(eval-when (:load-toplevel :compile-toplevel :execute)
+     (defun ,name ,args
+       ,@body)))

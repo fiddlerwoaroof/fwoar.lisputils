@@ -1,11 +1,6 @@
 (in-package :fwoar.anonymous-gf)
 
-(defmacro defun-ct (name (&rest args) &body body)
-  `(eval-when (:load-toplevel :compile-toplevel :execute)
-     (defun ,name ,args
-       ,@body)))
-
-(defun-ct get-specializers (specialized-lambda-list)
+(fw.lu:defun-ct get-specializers (specialized-lambda-list)
   (flet ((get-specializer (specializer)
            (etypecase specializer
              (symbol (find-class specializer))
@@ -17,7 +12,7 @@
                   (find-class t)))
             specialized-lambda-list)))
 
-(defun-ct make-anonymous-generic-function (lambda-list methods)
+(fw.lu:defun-ct make-anonymous-generic-function (lambda-list methods)
   (declare (optimize (debug 3)))
   (let* ((gf (make-instance 'standard-generic-function
                             :lambda-list lambda-list))
@@ -37,7 +32,7 @@
                               :lambda-list lambda-list
                               initargs))))))
 
-(defun-ct take-until (pred list)
+(fw.lu:defun-ct take-until (pred list)
   (loop for (item . rest) on list
      until (funcall pred item)
      collect item into items
@@ -45,7 +40,7 @@
        (return (values items
                        (cons item rest)))))
 
-(defun-ct get-methods (method-definition-list)
+(fw.lu:defun-ct get-methods (method-definition-list)
   (loop for (keyword . rest) in method-definition-list
      unless (eq keyword :method) do
        (error "method definitions must begin with the :METHOD keyword")
@@ -60,7 +55,7 @@
     `(make-anonymous-generic-function ',lambda-list ',methods)))
 
 #+null
-(lambda-generic (a b)
+(glambda (a b)
   (:method ((a integer) (b integer)) (+ a b))
   (:method (a b) 2)
   (:method :after (a b) (format t "~&~d ~d~%" a b)))

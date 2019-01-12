@@ -3,14 +3,13 @@
 (defpackage :fwoar.counter
   (:use :cl))
 
+(defpackage :patmatch
+  (:use :cl)
+  (:export :let-pat* :handle-pattern))
+
 (defpackage :fwoar.anonymous-gf
   (:use :cl)
   (:export :glambda))
-
-(defpackage :patmatch
-  (:use :cl)
-  (:export :let-pat*
-           :handle-pattern))
 
 (defpackage #:fwoar.lisputils
   (:use #:cl #:alexandria)
@@ -29,10 +28,9 @@
            #:setfs #:prog1-let #:prog1-bind #:if-let* #:with #:aconsf
            #+null #:ensure-list #:pick #:vector-destructuring-bind #:with-accessors*
            #:skip-values #:limit-values #:substitute-values #:op #:pick/r
-           #:pick-error #:twice #:glambda
-           #:default-unless
-           #:transform-first-value
-           #:may)) 
+           #:pick-error #:twice #:glambda #:default-unless #:transform-first-value
+           #:may #:defun-ct)) 
+
 
 (defpackage :fwoar.lisputils.shortcuts
   (:use :cl :fwoar.lisputils)
