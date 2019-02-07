@@ -29,7 +29,10 @@
            #+null #:ensure-list #:pick #:vector-destructuring-bind #:with-accessors*
            #:skip-values #:limit-values #:substitute-values #:op #:pick/r
            #:pick-error #:twice #:glambda #:default-unless #:transform-first-value
-           #:may #:defun-ct)) 
+           #:may #:defun-ct
+           #:define-cluser-entrypoint
+           #:new
+           #:make-constructor)) 
 
 
 (defpackage :fwoar.lisputils.shortcuts
