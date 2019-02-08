@@ -32,7 +32,8 @@
            #:may #:defun-ct
            #:define-cluser-entrypoint
            #:new
-           #:make-constructor)) 
+           #:make-constructor
+           #:dive)) 
 
 
 (defpackage :fwoar.lisputils.shortcuts

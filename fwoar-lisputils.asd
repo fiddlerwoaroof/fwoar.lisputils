@@ -1,16 +1,6 @@
 ;;;; fwoar-lisputils.asd
 (in-package :asdf-user)
 
-(defsystem #:fwoar-lisputils/string-utils
-  :description "A binary parser"
-  :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
-  :license "MIT"
-  :depends-on (#:should-test)
-  :components ((:file "string-utils/package")
-               (:file "string-utils/string-utils" :depends-on ("string-utils/package"))
-               #-lispworks
-               (:file "string-utils/test" :depends-on ("string-utils/string-utils"))))
-
 (asdf:defsystem #:fwoar-lisputils
   :description "Some utilities common to other libraries I'm writing"
   :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
@@ -40,7 +30,31 @@
                (:file "non-lispworks")
                #-lispworks
                (:file "patmatch")
-               (:file "glambda")))
+               (:file "glambda")
+               (:file "misc")))
+
+(defsystem #:fwoar-lisputils/string-utils
+  :description "A string splitter"
+  :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
+  :license "MIT"
+  :depends-on (#:should-test)
+  :components ((:file "string-utils/package")
+               (:file "string-utils/string-utils" :depends-on ("string-utils/package"))
+               #-lispworks
+               (:file "string-utils/test" :depends-on ("string-utils/string-utils"))))
+
+(asdf:defsystem #:fwoar-lisputils/swank-utils
+  :description "Utilities for use with swank"
+  :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
+  :license "MIT"
+  :serial t
+  :perform (test-op (o s)
+                    (funcall (intern "TEST" :should-test)
+                             :package :fwoar.string-utils))
+  :depends-on (#:fwoar-lisputils
+               #:yason
+               #:swank)
+  :components ((:file "swank-utils")))
 
 (defsystem #:fwoar-lisputils/bin-parser
   :description "A binary parser"

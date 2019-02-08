@@ -15,26 +15,45 @@
 ;; (pick '("a" "b" "c")
 ;;         {})
 ;; =>> nil nil {} nil
+(define-condition deprecation-warning (warning)
+  ((%symbol :initarg :symbol :reader dw-symbol :initform (error "symbol required"))
+   (%type :initarg :type :reader dw-type :initform (error "type required"))
+   (%replacement :initarg :replacement :reader dw-replacement :initform (error "replacement required"))))
 
+(defmethod print-object ((x deprecation-warning) stream)
+  (if *print-escape*
+      (call-next-method)
+      (let ((symbol (dw-symbol x))              
+            (replacement (dw-replacement x)))
+        (format stream "~(~a~) named ~a:~a is deprecated, use ~a:~a instead"
+                (dw-type x)
+                (package-name (symbol-package symbol))
+                symbol
+                (package-name (symbol-package replacement))
+                replacement))))
 
 (defun pick (keys h-t &optional default)
+  (warn 'deprecation-warning :symbol 'pick :type :function :replacement 'dive)
+  (dive keys h-t default))
+
+(defun dive (keys h-t &optional default)
   "(PICK KEYS H-T) => (values result found last-value last-key)
    result if all keys found, otherwise (or default nil)
    last-value the value associated with last-key or H-T if no key matches
    last-key the last key to match, or nil
    found-p nil if all keys didn't match otherwise truthy"
   (let ((result default) (found nil) (last-value h-t) (last-key nil)
-	(matched-keys 0) (key-count 0))
+	      (matched-keys 0) (key-count 0))
     (dolist (key keys)
       (incf key-count)
       (if (hash-table-p last-value)
-	  (multiple-value-bind (next-value next-found) (gethash key last-value)
-	    (setf found next-found)
-	    (when next-found
-	      (incf matched-keys)
-	      (setf last-key key
-		    last-value next-value)))
-	  (setf found nil)))
+	        (multiple-value-bind (next-value next-found) (gethash key last-value)
+	          (setf found next-found)
+	          (when next-found
+	            (incf matched-keys)
+	            (setf last-key key
+		                last-value next-value)))
+	        (setf found nil)))
     (when (= matched-keys key-count)
       (setf result last-value))
     (values result found last-value last-key)))
