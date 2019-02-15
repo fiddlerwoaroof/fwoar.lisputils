@@ -149,22 +149,22 @@
 
 ;;; CASES:::
 #|
-(fw.lu::destructuring-lambda ((slot slot-keyword . r))
-  (make-slot-spec slot slot-keyword))
-
-(fw.lu::destructuring-lambda ((slot slot-keyword . r))
-  (declare (ignore r))
-  (make-slot-spec slot slot-keyword))
-
-(fw.lu::destructuring-lambda ((slot slot-keyword . r) b c)
-  (make-slot-spec slot slot-keyword))
-
-(fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
-  (make-slot-spec slot slot-keyword))
-
-(fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
-  (declare (ignore r))
-  (make-slot-spec slot slot-keyword))
+;; (fw.lu::destructuring-lambda ((slot slot-keyword . r))
+;;   (make-slot-spec slot slot-keyword))
+;; 
+;; (fw.lu::destructuring-lambda ((slot slot-keyword . r))
+;;   (declare (ignore r))
+;;   (make-slot-spec slot slot-keyword))
+;; 
+;; (fw.lu::destructuring-lambda ((slot slot-keyword . r) b c)
+;;   (make-slot-spec slot slot-keyword))
+;; 
+;; (fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
+;;   (make-slot-spec slot slot-keyword))
+;; 
+;; (fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
+;;   (declare (ignore r))
+;;   (make-slot-spec slot slot-keyword))
 |#
 
 (defun alist-string-hash-table (alist)
