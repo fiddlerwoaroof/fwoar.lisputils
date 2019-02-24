@@ -42,12 +42,17 @@
    last-value the value associated with last-key or H-T if no key matches
    last-key the last key to match, or nil
    found-p nil if all keys didn't match otherwise truthy"
-  (let ((result default) (found nil) (last-value h-t) (last-key nil)
-	      (matched-keys 0) (key-count 0))
+  (let ((result default)
+        (found nil)
+        (last-value h-t)
+        (last-key nil)
+	      (matched-keys 0)
+        (key-count 0))
     (dolist (key keys)
       (incf key-count)
       (if (hash-table-p last-value)
-	        (multiple-value-bind (next-value next-found) (gethash key last-value)
+	        (multiple-value-bind (next-value next-found)
+              (gethash key last-value)
 	          (setf found next-found)
 	          (when next-found
 	            (incf matched-keys)

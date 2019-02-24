@@ -33,7 +33,8 @@
            #:define-cluser-entrypoint
            #:new
            #:make-constructor
-           #:dive)) 
+           #:dive
+           #:empty-hash-table-like)) 
 
 
 (defpackage :fwoar.lisputils.shortcuts
