@@ -1,5 +1,19 @@
 (in-package #:fwoar.lisputils)
 
+#-sbcl
+(defun empty-hash-table-like (hash-table)
+  (make-hash-table :test (hash-table-test hash-table)
+                   :size (hash-table-size hash-table)
+                   :rehash-size (hash-table-rehash-size hash-table)
+                   :rehash-threshold (hash-table-rehash-threshold hash-table)))
+#sbcl
+(defun empty-hash-table-like (hash-table)
+  (make-hash-table :test (hash-table-test hash-table)
+                   :size (hash-table-size hash-table)
+                   :rehash-size (hash-table-rehash-size hash-table)
+                   :rehash-threshold (hash-table-rehash-threshold hash-table)
+                   :hash-function (sb-impl::hash-table-hash-fun hash-table)
+
 ;; (pick '("a" "b" "c")
 ;;         { "a": { "b" : { "c" : 3 })
 ;; =>> 3 t 3 "c"
