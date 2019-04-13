@@ -2,5 +2,8 @@
 
 (defpackage :fwoar.string-utils
   (:use :cl)
-  (:export #:get-part-modifier #:split))
+  (:export #:get-part-modifier
+           #:split
+           #:insert-at
+           #:insert-where))
 

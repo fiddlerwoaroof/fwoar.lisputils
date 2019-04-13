@@ -39,7 +39,10 @@
   :license "MIT"
   :depends-on (#:should-test)
   :components ((:file "string-utils/package")
-               (:file "string-utils/string-utils" :depends-on ("string-utils/package"))
+               (:file "string-utils/split"
+                :depends-on ("string-utils/package"))
+               (:file "string-utils/string-utils"
+                :depends-on ("string-utils/package"))
                #-lispworks
                (:file "string-utils/test" :depends-on ("string-utils/string-utils"))))
 
