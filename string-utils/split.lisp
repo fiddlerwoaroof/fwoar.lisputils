@@ -35,7 +35,8 @@
                 (simple-string (char= (aref string end-idx) char))
                 (string (char= (aref string end-idx) char)))
           (setf (aref parts target-spot)
-                (make-array (- end-idx start-idx) :displaced-to string :displaced-index-offset start-idx
+                (make-array (- end-idx start-idx)
+                            :displaced-to string :displaced-index-offset start-idx
                             :element-type 'character))
           (incf target-spot)
           (setf start-idx (1+ end-idx))
@@ -79,7 +80,7 @@
                0))
          (find-pos (start-pos)
            (declare (optimize #+dev (debug 3) #+dev (speed 0) #+dev (space 0)
-                     #-dev (speed 3) #-dev(space 2))
+                              #-dev (speed 3) #-dev(space 2))
                     (type array-index start-pos))
            (etypecase test
              (function (position divider string :start start-pos :test test))
@@ -90,18 +91,18 @@
       (setf count (count-splits string)))
 
     (check-type count array-length)
-    (let ((parts (make-array (max count 1) :fill-pointer 0))
+    (let ((parts (make-array (max (1+ count) 1) :fill-pointer 0))
           (start-pos (the fixnum 0)))
       (declare (dynamic-extent start-pos))
       (prog1 parts
         (loop 
-           for end-pos = (find-pos start-pos)
-           while end-pos 
-           do
+          for end-pos = (find-pos start-pos)
+          while end-pos 
+          do
              (vector-push (subseq string start-pos end-pos) parts)
              (setf start-pos (1+ end-pos))
-           while (< (length parts) (1- count))
-           finally
+          while (< (length parts) count)
+          finally
              (cond ((or (and end-pos count)
                         (< start-pos (length string)))
                     (vector-push (subseq string start-pos)
@@ -146,16 +147,16 @@
                              :fill-pointer 0))
           (start-pos 0))
       (loop 
-         for end-pos = (typecase search-test
-                         (function (%search-with-test start-pos search-test))
-                         (null (%search start-pos)))
-         do
+        for end-pos = (typecase search-test
+                        (function (%search-with-test start-pos search-test))
+                        (null (%search start-pos)))
+        do
            (vector-push-extend (subseq string start-pos end-pos) parts) 
            (incf (the array-length num-parts))
-         while end-pos
-         do (setf start-pos (the array-length (+ pattern-length end-pos)))
-         until (and count (>= (1+ num-parts) count))
-         finally
+        while end-pos
+        do (setf start-pos (the array-length (+ pattern-length end-pos)))
+        until (and count (>= num-parts count))
+        finally
            (when (and count end-pos)
              (vector-push-extend (subseq string (+ pattern-length end-pos)) parts))
            (return parts)))))
