@@ -2,13 +2,20 @@
 
 (defmacro vector-destructuring-bind ((&rest symbols) vector &body body)
   (let ((mappings (loop for symbol in symbols
-		     for num from 0
-		     collect (list num symbol))))
+                        for num from 0
+                        collect (list num symbol))))
     (once-only (vector)
       `(symbol-macrolet ,(mapcar (destructuring-lambda ((num symbol))
-				   `(,symbol (aref ,vector ,num)))
-				 mappings)
-	 ,@body))))
+                                   `(,symbol (aref ,vector ,num)))
+				                  mappings)
+	       ,@body))))
+
+(defun v-assoc (item vector &key test test-not key)
+  (loop for cur across vector
+        for assoc-key = (car cur)
+        for keyed = (if key (funcall key assoc-key) assoc-key)
+        when (and test (funcall test keyed)) do (return cur)
+        when (and test-not (not (funcall test keyed))) do (return cur)))
 
 (defun v-first (vector)
   (elt vector 0))

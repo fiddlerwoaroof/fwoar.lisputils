@@ -34,7 +34,8 @@
            #:new
            #:make-constructor
            #:dive
-           #:empty-hash-table-like)) 
+           #:empty-hash-table-like
+           #:v-assoc)) 
 
 
 (defpackage :fwoar.lisputils.shortcuts
