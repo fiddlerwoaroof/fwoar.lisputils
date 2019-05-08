@@ -10,12 +10,14 @@
 				                  mappings)
 	       ,@body))))
 
+
 (defun v-assoc (item vector &key test test-not key)
   (loop for cur across vector
         for assoc-key = (car cur)
         for keyed = (if key (funcall key assoc-key) assoc-key)
-        when (and test (funcall test keyed)) do (return cur)
-        when (and test-not (not (funcall test keyed))) do (return cur)))
+        if (and test (funcall test item keyed)) do (return cur)
+        else if (and test-not (not (funcall test item keyed))) do (return cur)
+        else when (eql item keyed) do (return cur)))
 
 (defun v-first (vector)
   (elt vector 0))
