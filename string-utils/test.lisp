@@ -6,6 +6,48 @@
        (every 'equal a b)))
 
 (progn
+  (st:deftest string-partition-as-expected-1 ()
+    (st:should be vos-equal
+               '("b" "d")
+               (partition "aa" "baad")))
+
+  (st:deftest string-partition-as-expected-1-end ()
+    (st:should be vos-equal
+               '("ba" "")
+               (partition "ad" "baad")))
+  (st:deftest string-partition-as-expected-1-begin ()
+    (st:should be vos-equal
+               '("" "ad")
+               (partition "ba" "baad")))
+
+  (st:deftest string-partition-as-expected-2 ()
+    (st:should be vos-equal
+               '("b" "ad")
+               (partition #(#\a) "baad")))
+  (st:deftest string-partition-as-expected-2-end ()
+    (st:should be vos-equal
+               '("ba" "")
+               (partition #(#\a #\d) "baad")))
+  (st:deftest string-partition-as-expected-2-begin ()
+    (st:should be vos-equal
+               '("" "ad")
+               (partition #(#\b #\a) "baad")))
+
+
+  (st:deftest string-partition-as-expected-3 ()
+    (st:should be vos-equal
+               '("b" "ad")
+               (partition  #\a "baad")))
+  (st:deftest string-partition-as-expected-3-end ()
+    (st:should be vos-equal
+               '("baa" "")
+               (partition #\d "baad")))
+  (st:deftest string-partition-as-expected-3-begin ()
+    (st:should be vos-equal
+               '("" "aad")
+               (partition "b" "baad"))))
+
+(progn
   (st:deftest string-split-as-expected-with-test ()
     (st:should be vos-equal
                #("a" "a" "a" "a")
@@ -99,7 +141,11 @@
                (%split-on-char #\. "Bacon")))
   )
 
+#+nil
 (progn
+  (unintern 'string-partition-as-expected-1)
+  (unintern 'string-partition-as-expected-2)
+  (unintern 'string-partition-as-expected-3)
   (unintern 'char-split-as-expected)
   (unintern 'char-split-as-expected-with-consecutive-sep)
   (unintern 'char-split-as-expected-with-test)
