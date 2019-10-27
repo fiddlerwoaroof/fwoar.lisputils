@@ -11,39 +11,69 @@
                              :package :fwoar.string-utils))
   :depends-on (#:anaphora
                #:alexandria
-               #:serapeum
                #:cl-containers
+                 #:closer-mop
                #:iterate
+                 #:fwoar-lisputils/patmatch
                #:fwoar-lisputils/string-utils
-               #-lispworks #:plump
+                 #:plump
                #:positional-lambda
-               #-lispworks #:should-test)
+                 (:feature (:not (:or :ecl :abcl))
+                           #:fwoar-lisputils/implementation-dependent))
   :components ((:file "package")
                (:file "fwoar-lisputils")
-               (:file "lexical-compare")
                (:file "hash-functions")
                (:file "multiple-values")
-               (:file "clos-helpers")
+                 (:file "restarts")
                (:file "counter")
                (:file "vector-utils")
-               #-lispworks
-               (:file "non-lispworks")
-               #-lispworks
-               (:file "patmatch")
+                 (:file "html")
                (:file "glambda")
-               (:file "misc")))
+                 (:file "misc")
+                 ))
+
+(defsystem :fwoar-lisputils/implementation-dependent
+    :description "Utilities that don't work on every system"
+    :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
+    :license "MIT"
+    :serial t
+    :depends-on ()
+    :components ((:file "non-ecl" :if-feature (:not (:or :ecl :abcl)))
+                 (:file "lexical-compare" :if-feature (:not (:or :ecl :abcl)))
+                 (:file "clos-helpers" :if-feature (:not (:or :ecl :abcl)))))
+
+(defsystem :fwoar-lisputils/patmatch 
+    :description ""
+    :author "Ed L <edward@elangley.org>"
+    :license "MIT"
+    :depends-on (#:alexandria
+                 #:uiop)
+    :serial t
+    :components ((:module "patmatch"
+                  :components ((:file "package")
+                               (:file "patmatch" :depends-on ("package"))))))
+
+(defsystem :fwoar-lisputils/patmatch/test 
+    :description ""
+    :author "Ed L <edward@elangley.org>"
+    :license "MIT"
+    :depends-on (:fwoar-lisputils/patmatch
+                 :parachute)
+    :serial t
+    :components ((:module "patmatch"
+                  :components ((:file "test")))))
 
 (defsystem #:fwoar-lisputils/string-utils
   :description "A string splitter"
   :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
   :license "MIT"
-  :depends-on (#:should-test)
+    :depends-on ()
   :components ((:file "string-utils/package")
                (:file "string-utils/split"
                 :depends-on ("string-utils/package"))
                (:file "string-utils/string-utils"
                 :depends-on ("string-utils/package"))
-               #-lispworks
+                 #+(or)
                (:file "string-utils/test" :depends-on ("string-utils/string-utils"))))
 
 (asdf:defsystem #:fwoar-lisputils/swank-utils
