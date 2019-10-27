@@ -21,6 +21,29 @@
                                           _1))
                                   initializer-syms)))))
 
+(defmacro defclass+ (name (&rest super) &body (direct-slots &rest options))
+  (let ((initargs (append (mapcan (lambda (class)
+                                    (typecase class
+                                      (cons (cadr class))
+                                      (t nil)))
+                                  super)
+                          (mapcan (lambda (slot)
+                                    (alexandria:ensure-list
+                                     (alexandria:when-let ((initarg (getf (cdr slot)
+                                                                          :initarg)))
+                                       (make-symbol (symbol-name initarg)))))
+                                  direct-slots))))
+    `(progn (defclass ,name
+                ,(mapcar (lambda (it)
+                           (typecase it
+                             (cons (car it))
+                             (t it)))
+                  super)
+              ,direct-slots
+              ,@options)
+            (defun ,name (,@initargs)
+              (fw.lu:new ',name ,@initargs)))))
+
 (defun-ct %constructor-name (class)
   (format nil "~a-~a" '#:make class))
 
