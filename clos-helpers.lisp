@@ -10,11 +10,15 @@
       (error "new doesn't handle optional arguments"))
     (if rest
         `(make-instance ,class
-                        ,@(mapcan (serapeum:op (list (alexandria:make-keyword _1) _1))
+                        ,@(mapcan (lambda (_1)
+                                    (list (alexandria:make-keyword _1)
+                                          _1))
                                   required)
                         ,(make-keyword rest) ,rest)
         `(make-instance ,class
-                        ,@(mapcan (serapeum:op (list (alexandria:make-keyword _1) _1))
+                        ,@(mapcan (lambda (_1)
+                                    (list (alexandria:make-keyword _1)
+                                          _1))
                                   initializer-syms)))))
 
 (defun-ct %constructor-name (class)
