@@ -1,7 +1,7 @@
 ;;;; fwoar-lisputils.asd
 (in-package :asdf-user)
 
-(asdf:defsystem #:fwoar-lisputils
+(asdf:defsystem :fwoar-lisputils
     :description "Some utilities common to other libraries I'm writing"
     :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
     :license "MIT"
@@ -22,6 +22,8 @@
                            #:fwoar-lisputils/implementation-dependent))
     :components ((:file "package")
                  (:file "fwoar-lisputils")
+                 (:file "clos-helpers")
+                 (:file "walk")
                  (:file "hash-functions")
                  (:file "multiple-values")
                  (:file "restarts")
@@ -29,18 +31,15 @@
                  (:file "vector-utils")
                  (:file "html")
                  (:file "glambda")
-                 (:file "misc")
-                 ))
+                 (:file "misc")))
 
 (defsystem :fwoar-lisputils/implementation-dependent
     :description "Utilities that don't work on every system"
     :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
     :license "MIT"
     :serial t
-    :depends-on ()
-    :components ((:file "non-ecl" :if-feature (:not (:or :ecl :abcl)))
-                 (:file "lexical-compare" :if-feature (:not (:or :ecl :abcl)))
-                 (:file "clos-helpers" :if-feature (:not (:or :ecl :abcl)))))
+    :depends-on (#:serapeum)
+    :components ((:file "lexical-compare" :if-feature (:not (:or :ecl :abcl)))))
 
 (defsystem :fwoar-lisputils/patmatch 
     :description ""

@@ -296,49 +296,6 @@
 ;;    (list val)
 ;;    (t (list val))))
 
-(defun map-tree* (fun tree &optional (tag nil tagp))
-  "Walk FUN over TREE and build a tree from the results.
-
-The new tree may share structure with the old tree.
-
-     (eq tree (map-tree #'identity tree)) => T
-
-FUN can skip the current subtree with (throw TAG SUBTREE), in which
-case SUBTREE will be used as the value of the subtree."
-  (let ((fun (alexandria:ensure-function fun)))
-    (labels ((map-tree (tree)
-               (let ((tree2 (funcall fun tree)))
-                 (if (atom tree2)
-                     tree2
-                     (serapeum::reuse-cons (map-tree (car tree2))
-                                           (map-tree (cdr tree2))
-                                           tree2))))
-             (map-tree/tag (tree tag)
-               (catch tag
-                 (let ((tree2 (funcall fun tree)))
-                   (if (atom tree2)
-                       tree2
-                       (serapeum::reuse-cons (map-tree/tag (car tree2) tag)
-                                             (map-tree/tag (cdr tree2) tag)
-                                             tree2))))))
-      (if tagp
-          (map-tree/tag tree tag)
-          (map-tree tree)))))
-
-(defun replace-subtree (predicate value tree)
-  (let ((spliced-value nil))
-    (flet ((mapper (x)
-             (typecase x
-               (cons
-                (if (funcall predicate x)
-                    (progn
-                      (setf spliced-value x)
-                      (throw 'bail value))
-                    x))
-               (t x))))
-      (let ((result (map-tree* #'mapper tree 'bail)))
-        (values result spliced-value)))))
-
 
 (defmacro defun-ct (name (&rest args) &body body)
   `(eval-when (:load-toplevel :compile-toplevel :execute)
