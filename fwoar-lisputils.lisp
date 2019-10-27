@@ -1,5 +1,3 @@
-;;;; fwoar.lisputils.lisp
-
 (in-package #:fwoar.lisputils)
 
 (defmacro neither (&rest forms) `(not (or ,@forms)))

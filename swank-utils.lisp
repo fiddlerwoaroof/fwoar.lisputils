@@ -2,8 +2,7 @@
   #+fw.dev
   (:nicknames fw.su)
   (:use :cl )
-  (:export
-   #:log-json))
+  (:export #:log-json))
 (in-package :fwoar.swank-utils)
 
 (defvar *target-identifier* (alexandria:make-keyword (gensym "JSON")))
