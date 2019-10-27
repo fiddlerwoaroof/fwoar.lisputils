@@ -2,7 +2,7 @@
   #+fw.dev
   (:nicknames fw.su)
   (:use :cl )
-  (:export #:log-json))
+  (:export #:log-json #:log-object))
 (in-package :fwoar.swank-utils)
 
 (defvar *target-identifier* (alexandria:make-keyword (gensym "JSON")))
@@ -15,4 +15,14 @@
       (terpri buffer-stream)
       (finish-output stream)
       (finish-output buffer-stream)
+      (close stream))))
+
+(defvar *log-target-identifier* (alexandria:make-keyword (gensym "LOG")))
+(defun log-object (obj &optional (target-identifier *log-target-identifier*))
+  (let* ((stream (swank-buffer-streams:make-buffer-output-stream target-identifier)))
+    (unwind-protect (progn (fresh-line stream)
+                           (values (princ obj stream)
+                                   target-identifier))
+      (terpri stream)
+      (finish-output stream)
       (close stream))))
