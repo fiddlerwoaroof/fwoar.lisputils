@@ -46,21 +46,13 @@
     :author "Ed L <edward@elangley.org>"
     :license "MIT"
     :depends-on (#:alexandria
+                 #:closer-mop
+                 #:parachute
+                 #:serapeum
                  #:uiop)
-    :serial t
     :components ((:module "patmatch"
                   :components ((:file "package")
                                (:file "patmatch" :depends-on ("package"))))))
-
-(defsystem :fwoar-lisputils/patmatch/test 
-    :description ""
-    :author "Ed L <edward@elangley.org>"
-    :license "MIT"
-    :depends-on (:fwoar-lisputils/patmatch
-                 :parachute)
-    :serial t
-    :components ((:module "patmatch"
-                  :components ((:file "test")))))
 
 (defsystem #:fwoar-lisputils/string-utils
     :description "A string splitter"

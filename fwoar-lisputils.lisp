@@ -1,17 +1,18 @@
 (in-package #:fwoar.lisputils)
 
-(defmacro neither (&rest forms) `(not (or ,@forms)))
+(defmacro neither (&rest forms)
+  `(not (or ,@forms)))
 
 (defmacro neither-null (&rest forms)
   `(neither ,@(loop for form
-                 in forms
-                 collecting `(null ,form))))
+                      in forms
+                    collecting `(null ,form))))
 
 
 (defmacro let-each ((&key (be '*)) &body forms)
   "Bind each element successively to the symbol specified via :be"
   `(let* ,(loop for form in forms
-             collect (list be form))
+                collect (list be form))
      ,be))
 
 (defmacro let-first ((&key (be '*)) bound &body forms)
@@ -114,10 +115,10 @@
 
 (defmacro m-lambda (sym &rest args)
   (let ((arglist (loop for x in args
-                    unless (member x (list '&optional '&key '&rest))
-                    collect (ctypecase x
-                              (cons                  (car x))
-                              ((or symbol keyword string) x)))))
+                       unless (member x (list '&optional '&key '&rest))
+                         collect (ctypecase x
+                                   (cons                  (car x))
+                                   ((or symbol keyword string) x)))))
     `(lambda (,@args)
        (,sym ,@arglist))))
 
@@ -133,14 +134,14 @@
                               args))
            (args (mapcar #'list args args-syms))
            (destructuring-expressions
-            (rollup-list
-             (loop for (arg arg-sym) in args
-                collect (if (consp arg)
-                            `(destructuring-bind ,arg ,arg-sym
-                               (declare (ignore ,@ignored) (ignorable ,@ignorable)))
-                            `(let ((,arg ,arg-sym))
-                               ,@(generate-declarations-for arg ignored ignorable))))
-             body)))
+             (rollup-list
+              (loop for (arg arg-sym) in args
+                    collect (if (consp arg)
+                                `(destructuring-bind ,arg ,arg-sym
+                                   (declare (ignore ,@ignored) (ignorable ,@ignorable)))
+                                `(let ((,arg ,arg-sym))
+                                   ,@(generate-declarations-for arg ignored ignorable))))
+              body)))
       `(lambda ,args-syms
          ,destructuring-expressions))))
 
@@ -176,8 +177,9 @@
   (alexandria:once-only (from to)
     `(progn
        (setf ,@(apply #'append
-                      (iterate:iterate (iterate:for (fro-slot to-slot) iterate:in (ensure-mapping slots))
-                                       (iterate:collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot))))))
+                      (iterate:iterate
+                        (iterate:for (fro-slot to-slot) iterate:in (ensure-mapping slots))
+                        (iterate:collect `((slot-value ,to ',to-slot) (slot-value ,from ',fro-slot))))))
        ,to)))
 
 (defun transform-alist (function alist)
@@ -207,7 +209,7 @@
              (typecase (cdr form)
                (symbol (list (cdr form)))
                (cons (loop for thing in (cdr form)
-                        append (find-nonoperator-symbols thing))))))))))
+                           append (find-nonoperator-symbols thing))))))))))
 
 (defmacro may ((op arg))
   (alexandria:once-only (arg)
@@ -237,16 +239,18 @@
 (defun make-pairs (symbols)
                                         ;TODO: does this duplicate ensure-mapping?
   (cons 'list
-        (iterate:iterate (iterate:for (key value) in symbols)
-                         (iterate:collect `(list* ,(symbol-name key) ,value)))))
+        (iterate:iterate
+          (iterate:for (key value) in symbols)
+          (iterate:collect `(list* ,(symbol-name key) ,value)))))
 
 (defmacro slots-to-pairs (obj (&rest slots))
   (declare (optimize (debug 3)))
   "Produce a alist from a set of object slots and their values"
   (alexandria:once-only (obj)
     (let* ((slots (ensure-mapping slots))
-           (bindings (iterate:iterate (iterate:for (slot v &key bind-from) in slots)
-                                      (iterate:collect (or bind-from slot)))))
+           (bindings (iterate:iterate
+                       (iterate:for (slot v &key bind-from) in slots)
+                       (iterate:collect (or bind-from slot)))))
       `(with-slots ,bindings ,obj
          ,(make-pairs slots)))))
 

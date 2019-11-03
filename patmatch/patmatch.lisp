@@ -42,4 +42,3 @@
   `(let* (,@ (loop for ((discriminator . args) val-form) in clauses
                    append (apply 'handle-pattern discriminator val-form args)))
      ,@body))
-
