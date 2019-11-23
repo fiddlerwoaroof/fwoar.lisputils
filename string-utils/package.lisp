@@ -5,5 +5,6 @@
   (:export #:get-part-modifier
            #:split
            #:insert-at
-           #:insert-where))
+           #:insert-where
+           #:partition))
 
