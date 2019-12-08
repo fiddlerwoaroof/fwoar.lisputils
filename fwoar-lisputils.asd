@@ -38,7 +38,8 @@
     :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
     :license "MIT"
     :serial t
-    :depends-on (#:serapeum)
+    :depends-on (#:serapeum
+                 #:should-test)
     :components ((:file "lexical-compare" :if-feature (:not (:or :ecl :abcl)))))
 
 (defsystem :fwoar-lisputils/patmatch 
