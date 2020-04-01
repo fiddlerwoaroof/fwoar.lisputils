@@ -14,12 +14,12 @@
                #:cl-containers
                #:closer-mop
                #:iterate
-               #:fwoar-lisputils/patmatch
+               (:feature (:not (:or :ecl :abcl))
+                         #:fwoar-lisputils/patmatch)
                #:fwoar-lisputils/string-utils
                #:plump
                #:positional-lambda
-               (:feature (:not (:or :ecl :abcl))
-                         #:fwoar-lisputils/implementation-dependent))
+               #:fwoar-lisputils/lexical-compare)
   :components ((:file "package")
                (:file "fwoar-lisputils")
                (:file "clos-helpers")
@@ -33,16 +33,15 @@
                (:file "glambda")
                (:file "misc")))
 
-(defsystem :fwoar-lisputils/implementation-dependent
+(defsystem :fwoar-lisputils/lexical-compare
   :description "Utilities that don't work on every system"
   :author "fiddlerwoaroof <fiddlerwoaroof@gmail.com"
   :license "MIT"
   :serial t
-  :depends-on (#:serapeum
-               #:should-test)
-  :components ((:file "lexical-compare" :if-feature (:not (:or :ecl :abcl)))))
+  :depends-on ()
+  :components ((:file "lexical-compare")))
 
-(defsystem :fwoar-lisputils/patmatch 
+(defsystem :fwoar-lisputils/patmatch
   :description ""
   :author "Ed L <edward@elangley.org>"
   :license "MIT"

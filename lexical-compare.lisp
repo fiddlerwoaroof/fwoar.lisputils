@@ -38,6 +38,7 @@
   (:method ((a string) (b string))
     (string= a b)))
 
+#+(or)
 (st:deftest test-parse-mixed-string ()
   (st:should be equal
              (list)
@@ -64,10 +65,14 @@
     (apply 'apply fun args)))
 
 (defun lexi-compare (a b &optional (elem-compare 'part<))
-  (apply-when elem-compare
-              (car
-               (serapeum:drop-while (serapeum:op (apply 'part= _1))
-                                    (mapcar 'list a b)))))
+  (let* ((mismatch-pos (mismatch a b :test 'part=))
+         (a-tail (when mismatch-pos (nthcdr mismatch-pos a)))
+         (b-tail (when mismatch-pos (nthcdr mismatch-pos b))))
+    (or (when (and a-tail b-tail)
+          (funcall elem-compare
+                   (car a-tail)
+                   (car b-tail)))
+        (null a-tail))))
 
 (defun natural-sort-strings (a b)
   (lexi-compare (parse-mixed-string a)

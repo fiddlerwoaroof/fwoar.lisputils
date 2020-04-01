@@ -18,8 +18,6 @@
   (:use #:cl #:alexandria)
   (:nicknames #:fw.lu)
   (:shadow #:with)
-  (:import-from #:fwoar.anonymous-gf #:glambda)
-  (:import-from #:patmatch #:let-pat*)
   (:export #:lambda-if #:lambda-cond #:alambda #:rollup-list
            #:ensure-mapping #:alist-string-hash-table #:make-pairs
            #:copy-slots #:transform-alist #:%json-pair-transform
@@ -29,8 +27,8 @@
            #:neither-null #:m-lambda #:sets #:defparameters #:setfs
            #:prog1-let #:prog1-bind #:if-let* #:with #:aconsf #:pick
            #:vector-destructuring-bind #:with-accessors* #:skip-values
-           #:limit-values #:substitute-values #:op #:pick/r
-           #:pick-error #:twice #:glambda #:default-unless
+           #:limit-values #:substitute-values #:pick/r
+           #:pick-error #:twice #:default-unless
            #:transform-first-value #:may #:defun-ct
            #:define-cluser-entrypoint #:new #:make-constructor #:dive
            #:empty-hash-table-like #:v-assoc #:defclass+))
