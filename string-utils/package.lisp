@@ -6,5 +6,6 @@
            #:split
            #:insert-at
            #:insert-where
-           #:partition))
+           #:partition
+           #:partition-if))
 

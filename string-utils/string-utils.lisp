@@ -47,3 +47,14 @@
       (typecase at
         (character (partition-char at string from-end))
         (sequence (partition-subseq at string from-end))))))
+
+(defun partition-if (at string &key from-end)
+  (let ((from-end (not (not from-end))))
+    (declare (inline partition-char partition-subseq)
+               (optimize (speed 3)))
+    (let ((pos (expand-branch from-end (position-if at string :from-end from-end))))
+        (if pos
+          (list (subseq string 0 pos)
+                (subseq string (1+ pos)))
+          (list string
+                nil)))))
