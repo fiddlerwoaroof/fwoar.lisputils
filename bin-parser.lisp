@@ -1,6 +1,7 @@
 (uiop:define-package :fwoar.bin-parser
     (:use :cl)
   (:mix :fw.lu :alexandria :serapeum)
+  (:import-from :serapeum :op)
   (:export :le->int :be->int
            :read-bytes :extract
            :extract-let :byte-array-to-hex-string
@@ -76,7 +77,7 @@ the element-type of the returned string."
                                 (append (when (and size (symbolp size))
                                           (unsplice
                                            (list* name size other)))
-                                        rest))))) 
+                                        rest)))))
 
 (defun resolve-sizes (desc extant-bindings)
   (declare (optimize (debug 3)))
