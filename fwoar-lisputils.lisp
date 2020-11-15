@@ -243,6 +243,18 @@
           (iterate:for (key value) in symbols)
           (iterate:collect `(list* ,(symbol-name key) ,value)))))
 
+(defmacro closing ((op &rest args))
+  (let ((stream-sym (gensym "STRING")))
+    `(with-open-stream (,stream-sym ,(first args))
+       (,op ,stream-sym ,@(cdr args)))))
+#+fw.ignore
+(progn
+  (closing (read-line (open "/foo/bar"
+                            :element-type '(unsigned-byte 8))
+                      nil
+                      :the-end))
+  )
+
 (defmacro slots-to-pairs (obj (&rest slots))
   (declare (optimize (debug 3)))
   "Produce a alist from a set of object slots and their values"
