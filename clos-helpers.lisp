@@ -66,6 +66,7 @@
                                                               `(,it nil ,it-p))
                                                             optional
                                                             passed-args))))
+                  (declare (optimize (speed 3) (debug 0)))
                   ,(if optional
                        (let ((heads (reverse (inits optional))))
                          `(cond ,@(mapcar (lambda (it it-p)
