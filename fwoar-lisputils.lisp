@@ -246,6 +246,14 @@
           (iterate:for (key value) in symbols)
           (iterate:collect `(list* ,(symbol-name key) ,value)))))
 
+(defun inits (l)
+  (serapeum:with-collector (c)
+    (let ((its ()))
+      (mapc (lambda (it)
+              (push it its)
+              (c (reverse its)))
+            l))))
+
 (defmacro closing ((op &rest args))
   (let ((stream-sym (gensym "STRING")))
     `(with-open-stream (,stream-sym ,(first args))
