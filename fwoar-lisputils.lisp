@@ -211,10 +211,13 @@
                (cons (loop for thing in (cdr form)
                            append (find-nonoperator-symbols thing))))))))))
 
-(defmacro may ((op arg))
-  (alexandria:once-only (arg)
-    `(when ,arg
-       (,op ,arg))))
+(defmacro may ((op arg &rest r))
+  (let ((cond (case op
+                (cl:funcall (car r))
+                (t arg))))
+    (alexandria:once-only (arg)
+      `(when ,cond
+         (,op ,arg ,@r)))))
 
 (defmacro default-when (default test &body body)
   "return the default unless the test is true"
