@@ -87,12 +87,12 @@
               ignorable-vars
               body)))
 
-  (defun ensure-mapping (list)
+  (defun ensure-mapping (list &optional (key-fn 'identity))
     "Take a list and make sure that it's parseable as a let-style binding.
      Very handy for certain sorts of macros."
     (let ((symbols->mappings (lambda-cond (x)
-                               ((symbolp x) `(,x ,x))
-                               ((null (cdr x)) `(,#1=(car x) ,#1#))
+                               ((symbolp x) `(,(funcall key-fn x) ,x))
+                               ((null (cdr x)) `(,(funcall key-fn #1=(car x)) ,#1#))
                                (t x))))
       (mapcar symbols->mappings list)))
 
@@ -105,7 +105,7 @@
                     ((endp list) (return-from rollup-list accum))
                     (t (psetf accum  (cond
                                        ((null accum) (car list))
-                                       (start `(,@(car list) ,@accum)) 
+                                       (start `(,@(car list) ,@accum))
                                        (t `(,@(car list) ,accum)))
                               list (cdr list)
                               start nil)
@@ -150,17 +150,17 @@
 #|
 ;; (fw.lu::destructuring-lambda ((slot slot-keyword . r))
 ;;   (make-slot-spec slot slot-keyword))
-;; 
+;;
 ;; (fw.lu::destructuring-lambda ((slot slot-keyword . r))
 ;;   (declare (ignore r))
 ;;   (make-slot-spec slot slot-keyword))
-;; 
+;;
 ;; (fw.lu::destructuring-lambda ((slot slot-keyword . r) b c)
 ;;   (make-slot-spec slot slot-keyword))
-;; 
+;;
 ;; (fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
 ;;   (make-slot-spec slot slot-keyword))
-;; 
+;;
 ;; (fw.lu::destructuring-lambda ((slot slot-keyword . r) b)
 ;;   (declare (ignore r))
 ;;   (make-slot-spec slot slot-keyword))
