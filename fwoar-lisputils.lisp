@@ -326,3 +326,13 @@
   `(eval-when (:load-toplevel :compile-toplevel :execute)
      (defun ,name ,args
        ,@body)))
+
+(defmacro retry-once (&body body)
+  (alexandria:with-gensyms (flag)
+    `(let ((,flag t))
+       (tagbody
+        start
+          ,@body
+          (when ,flag
+            (setf ,flag nil)
+            (go start))))))
