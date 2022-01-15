@@ -85,3 +85,17 @@
     `(defgeneric ,constructor-name (,@args)
        (:method (,@args)
          (new ',class ,@args)))))
+
+(defclass hashtable-slot-mixin ()
+  ((%doc :reader hsm-doc :initarg :doc)))
+
+(defmethod c2mop:slot-value-using-class :before (class (object hashtable-slot-mixin) slotd)
+  (let ((slot-name (c2mop:slot-definition-name slotd)))
+    (unless (or (eql slot-name '%doc)
+                (c2mop:slot-boundp-using-class class object slotd))
+      (let* ((doc (hsm-doc object))
+             (doc-value (gethash (substitute #\_ #\-
+                                             (string-downcase
+                                              (symbol-name slot-name)))
+                                 doc)))
+        (setf (slot-value object slot-name) doc-value)))))
