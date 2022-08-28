@@ -219,6 +219,15 @@
       `(when ,cond
          (,op ,arg ,@r)))))
 
+(defmacro str->stream ((op arg &rest r))
+  (let ((string (case op
+                  (cl:funcall (car r))
+                  (t arg))))
+    (alexandria:once-only (arg)
+      (alexandria:with-gensyms (s)
+        `(with-input-from-string (,s ,arg)
+           (,op ,s ,@r))))))
+
 (defmacro default-when (default test &body body)
   "return the default unless the test is true"
   (warn "default-when is deprecated, renamed to default-unless")
