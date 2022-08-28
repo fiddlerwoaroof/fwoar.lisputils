@@ -34,7 +34,10 @@
            #:empty-hash-table-like #:v-assoc #:defclass+
            #:closing
            #:inits
-           #:retry-once))
+           #:retry-once
+           #:hashtable-slot-mixin
+           #:hsm-doc
+           #:str->stream))
 
 
 (defpackage :fwoar.lisputils.shortcuts

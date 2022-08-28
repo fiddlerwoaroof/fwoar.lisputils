@@ -13,13 +13,15 @@
   (flet ((count-splits (string)
            (declare (optimize (speed 3))
                     (type simple-string string))
+           (if (= 0 (length string))
+               1
            (do* ((x (the array-length 0) (1+ x))
                  (cur-char #1=(aref string x) #1#)
                  (result (the array-length 0) (if (char= cur-char char)
                                                   (1+ result)
                                                   result)))
                 ((= x (1- (length string))) (1+ result))
-             (declare (type array-length result)))))
+                 (declare (type array-length result))))))
     (typecase string
       ((and string (not simple-string))
        (setf string (copy-seq string))))
