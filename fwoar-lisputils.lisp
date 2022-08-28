@@ -325,6 +325,16 @@
   (acons key datum alist))
 (define-modify-macro aconsf (key datum) do-acons)
 
+
+(defun do-adjoin (list item &rest r &key key test test-not)
+  (declare (ignore key test test-not))
+  (apply #'adjoin item list r))
+(define-compiler-macro do-adjoin (list item &rest r)
+  (alexandria:once-only (list item)
+    `(adjoin ,item ,list ,@r)))
+(define-modify-macro adjoinf (item &rest r)
+  do-adjoin)
+
 ;;(defun ensure-list (val)
 ;;  (typecase val
 ;;    (list val)
