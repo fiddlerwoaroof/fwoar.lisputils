@@ -9,8 +9,7 @@
   :perform (test-op (o s)
                     (funcall (intern "TEST" :should-test)
                              :package :fwoar.string-utils))
-  :depends-on (#:anaphora
-               #:alexandria
+  :depends-on (#:alexandria
                #:cl-containers
                #:closer-mop
                #:iterate

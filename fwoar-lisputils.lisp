@@ -42,8 +42,8 @@
        ,@body)))
 
 (defmacro alambda (&body body)
-  `(lambda (anaphora:it)
-     (declare (ignorable anaphora:it))
+  `(lambda (it)
+     (declare (ignorable it))
      ,@body))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -348,9 +348,9 @@
 
 (defmacro retry-once ((flag-sym) &body body)
   `(let ((,flag-sym t))
-       (tagbody
-        start
-          ,@body
+     (tagbody
+      start
+        ,@body
         (when ,flag-sym
           (setf ,flag-sym nil)
           (go start)))))
