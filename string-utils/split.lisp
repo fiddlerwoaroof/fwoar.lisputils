@@ -15,12 +15,12 @@
                     (type simple-string string))
            (if (= 0 (length string))
                1
-           (do* ((x (the array-length 0) (1+ x))
-                 (cur-char #1=(aref string x) #1#)
-                 (result (the array-length 0) (if (char= cur-char char)
-                                                  (1+ result)
-                                                  result)))
-                ((= x (1- (length string))) (1+ result))
+               (do* ((x (the array-length 0) (1+ x))
+                     (cur-char #1=(aref string x) #1#)
+                     (result (the array-length 0) (if (char= cur-char char)
+                                                      (1+ result)
+                                                      result)))
+                    ((= x (1- (length string))) (1+ result))
                  (declare (type array-length result))))))
     (typecase string
       ((and string (not simple-string))
@@ -97,9 +97,9 @@
           (start-pos (the fixnum 0)))
       (declare (dynamic-extent start-pos))
       (prog1 parts
-        (loop 
+        (loop
           for end-pos = (find-pos start-pos)
-          while end-pos 
+          while end-pos
           do
              (vector-push (subseq string start-pos end-pos) parts)
              (setf start-pos (1+ end-pos))
@@ -148,12 +148,12 @@
                              :adjustable t
                              :fill-pointer 0))
           (start-pos 0))
-      (loop 
+      (loop
         for end-pos = (typecase search-test
                         (function (%search-with-test start-pos search-test))
                         (null (%search start-pos)))
         do
-           (vector-push-extend (subseq string start-pos end-pos) parts) 
+           (vector-push-extend (subseq string start-pos end-pos) parts)
            (incf (the array-length num-parts))
         while end-pos
         do (setf start-pos (the array-length (+ pattern-length end-pos)))
