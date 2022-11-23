@@ -346,12 +346,11 @@
      (defun ,name ,args
        ,@body)))
 
-(defmacro retry-once (&body body)
-  (alexandria:with-gensyms (flag)
-    `(let ((,flag t))
+(defmacro retry-once ((flag-sym) &body body)
+  `(let ((,flag-sym t))
        (tagbody
         start
           ,@body
-          (when ,flag
-            (setf ,flag nil)
-            (go start))))))
+        (when ,flag-sym
+          (setf ,flag-sym nil)
+          (go start)))))
