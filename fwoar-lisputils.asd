@@ -17,7 +17,6 @@
                          #:fwoar-lisputils/patmatch)
                #:fwoar-lisputils/string-utils
                #:plump
-               #:positional-lambda
                #:fwoar-lisputils/lexical-compare)
   :components ((:file "package")
                (:file "fwoar-lisputils")
