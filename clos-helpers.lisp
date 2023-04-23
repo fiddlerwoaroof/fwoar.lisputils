@@ -115,3 +115,13 @@
                                               (symbol-name slot-name)))
                                  doc)))
         (setf (slot-value object slot-name) doc-value)))))
+
+
+(defmacro define-printer (class &body options)
+  (alexandria:with-gensyms (s)
+    `(defmethod print-object ((,class ,class) ,s)
+       (print-unreadable-object (,class ,s :type t :identity t)
+         ,(destructuring-bind (name value) (car options)
+            `(format ,s "~a: ~s" ,name (,value ,class)))
+         ,@(loop for (name value) in (cdr options)
+                 collect `(format ,s ", ~a: ~s" ,name (,value ,class)))))))
