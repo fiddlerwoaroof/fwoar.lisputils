@@ -354,3 +354,14 @@
         (when ,flag-sym
           (setf ,flag-sym nil)
           (go start)))))
+
+(defun split-at (el list &key (test #'eql) (key nil))
+  (if key
+      (loop for it on list
+            until (funcall test (funcall key (car it)) el)
+            collect (car it) into head
+            finally (return (values head it)))
+      (loop for it on list
+            until (funcall test (car it) el)
+            collect (car it) into head
+            finally (return (values head it)))))

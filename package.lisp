@@ -33,7 +33,7 @@
            #:define-cluser-entrypoint #:new #:make-constructor #:dive
            #:empty-hash-table-like #:v-assoc #:defclass+
            #:closing #:inits #:retry-once #:hashtable-slot-mixin #:hsm-doc #:adjoinf
-           #:it))
+           #:it :keys))
 
 
 (defpackage :fwoar.lisputils.shortcuts

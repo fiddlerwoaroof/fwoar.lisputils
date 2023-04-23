@@ -4,6 +4,15 @@
   `(with-accessors ,(ensure-mapping accessors) ,object
      ,@body))
 
+(defmacro keys ((op &rest args))
+  (multiple-value-bind (positional keywords) (split-at  '&key args)
+    `(,op
+       ,@positional
+       ,@(mapcan (lambda (_1)
+                   (list (alexandria:make-keyword _1)
+                         _1))
+                 (cdr keywords)))))
+
 (defmacro new (class &rest initializer-syms)
   (multiple-value-bind (required optional rest) (parse-ordinary-lambda-list initializer-syms)
     (when optional
